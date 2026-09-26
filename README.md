@@ -82,6 +82,28 @@ Check the result with `hyprctl reload && hyprctl configerrors`.
 Click the bar icon to open the panel. To open it from a key, bind
 `omarchy-shell omany toggle`; `omarchy-shell omany settings` opens it on the settings.
 
+### Your own keys
+
+The four slots are a starting point. Any key can open any agent, with the same rules
+(Herdr, a new tab, a unique name, the skill for Claude Code and Codex):
+
+```lua
+o.bind("SUPER + CTRL + SHIFT + G", "Gemini in Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"gemini\"}'")
+o.bind("SUPER + CTRL + SHIFT + O", "OpenCode in Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"opencode\"}'")
+```
+
+Before picking a key, check it is free with `omarchy menu keybindings --print`.
+From a script, the same launcher runs directly:
+`~/.config/omarchy/plugins/io.github.aiob3.omany/bin/omany --agent <name>`.
+
+### omany as the base for your agents
+
+Every agent omany opens lives in one Herdr workspace under a stable name, so they can
+work together: one agent can hand a task to another with
+`herdr agent prompt codex "review the last change"` and read the answer with
+`herdr agent read codex`. Keys, slots and names give you a predictable layout to
+orchestrate the agents you use on your system.
+
 ## Settings
 
 In the panel, each slot has its own picker. Under **Settings**:
@@ -113,6 +135,23 @@ OMANY_OTHER_AGENT=""       # agent for Z; empty = Claude Code <-> Codex
 OMANY_SLOT_S=""            # agent for S; empty = unassigned
 OMANY_SLOT_X=""            # agent for X; empty = unassigned
 ```
+
+## Tested agents
+
+Tested in real use on Omarchy with Herdr 0.8.2 (2026-09-25 and 26). "Supported"
+means omany knows how to start the agent, but we have not run it yet.
+
+| Agent | Status |
+|---|---|
+| Claude Code | Tested: opens in Herdr with the Omarchy skill loaded |
+| Codex | Tested: opens in Herdr with the Omarchy skill loaded |
+| GitHub Copilot CLI | Tested: opens in Herdr |
+| Grok | Tested: opens in Herdr |
+| OpenCode | Opens in Herdr; in our test OpenCode itself stopped during its own startup |
+| Gemini, Cursor Agent, Hermes, OMP, Pi | Supported, not tested yet |
+| OpenClaw, Crush, Muse | Supported as a plain command in a Herdr tab, not tested yet |
+
+If you run one of the untested agents with omany, an issue with the result is welcome.
 
 ## Heads-up: unattended mode
 
@@ -233,6 +272,29 @@ As teclas vão no `~/.config/hypr/bindings.lua`, com as mesmas linhas da seção
 | Super+Ctrl+Shift+A | vaga A: o seu agente padrão |
 | Super+Ctrl+Shift+Z | vaga Z: o par dele |
 | Super+Ctrl+Shift+S / X | vagas S e X: o agente que você escolheu, ou um aviso se estiver vazia |
+
+### Suas próprias teclas
+
+As quatro vagas são um ponto de partida. Qualquer tecla abre qualquer agente, com as
+mesmas regras:
+
+```lua
+o.bind("SUPER + CTRL + SHIFT + G", "Gemini no Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"gemini\"}'")
+```
+
+Como todo agente aberto pelo omany fica num mesmo workspace do Herdr com um nome
+estável, eles trabalham juntos: um passa tarefa ao outro com
+`herdr agent prompt codex "revise a última mudança"`. O omany vira a base para
+orquestrar os agentes do seu sistema.
+
+### Agentes homologados
+
+| Agente | Situação |
+|---|---|
+| Claude Code, Codex | Testados: abrem no Herdr com o skill do Omarchy |
+| GitHub Copilot CLI, Grok | Testados: abrem no Herdr |
+| OpenCode | Abre no Herdr; no nosso teste o próprio OpenCode parou na inicialização dele |
+| Gemini, Cursor Agent, Hermes, OMP, Pi, OpenClaw, Crush, Muse | Suportados, ainda não testados |
 
 ### Atenção: modo sem aprovação
 

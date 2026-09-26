@@ -21,12 +21,15 @@ Item {
   }
 
   // summon payloads: {"agent":"other"} starts the counterpart of the default
-  // agent; {"slot":"s"} or {"slot":"x"} starts the agent assigned to that slot.
+  // agent; {"slot":"s"} or {"slot":"x"} starts the agent assigned to that slot;
+  // {"agent":"<name>"} starts that agent, so any key can open any agent.
   function open(payloadJson) {
     var data = {}
     try { data = JSON.parse(String(payloadJson || "{}")) || {} } catch (e) {}
     if (data.slot === "s" || data.slot === "x") root.launch(["--slot", data.slot])
-    else root.launch(data.agent === "other" ? ["--other"] : [])
+    else if (data.agent === "other") root.launch(["--other"])
+    else if (typeof data.agent === "string" && /^[a-z][a-z0-9-]*$/.test(data.agent)) root.launch(["--agent", data.agent])
+    else root.launch([])
   }
   function toggle() { root.launch([]) }
   function close() {}
