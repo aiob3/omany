@@ -24,28 +24,9 @@
 
 set -uo pipefail
 
-OMANY_WORKSPACE="${OMANY_WORKSPACE:-agents}"
-OMANY_CWD="${OMANY_CWD:-}"
-OMANY_LOAD_SKILL="${OMANY_LOAD_SKILL:-true}"
-OMANY_SESSION="${OMANY_SESSION:-}"
-OMANY_OTHER_AGENT="${OMANY_OTHER_AGENT:-}"
-OMANY_SLOT_S="${OMANY_SLOT_S:-}"
-OMANY_SLOT_X="${OMANY_SLOT_X:-}"
-config="${XDG_CONFIG_HOME:-$HOME/.config}/omany/config"
-# shellcheck source=/dev/null
-[[ -f $config ]] && source "$config"
-
-# Settings changed in the bar's settings form win over the config file. shell.json
-# only stores keys the user changed, so untouched fields keep the values above.
-bar_settings=$(jq -c '[.bar.layout[]?[]? | objects | select(.id == "io.github.aiob3.omany")][0] // {}' \
-  "${XDG_CONFIG_HOME:-$HOME/.config}/omarchy/shell.json" 2>/dev/null) || bar_settings="{}"
-bar() { jq -r --arg k "$1" 'if has($k) then .[$k] | tostring else empty end' <<<"$bar_settings"; }
-v=$(bar workspace) && [[ -n $v ]] && OMANY_WORKSPACE="$v"
-v=$(bar cwd) && [[ -n $v ]] && OMANY_CWD="$v"
-v=$(bar loadSkill) && [[ -n $v ]] && OMANY_LOAD_SKILL="$v"
-v=$(bar otherAgent) && [[ -n $v ]] && { [[ $v == auto ]] && OMANY_OTHER_AGENT="" || OMANY_OTHER_AGENT="$v"; }
-v=$(bar slotS) && [[ -n $v ]] && { [[ $v == none ]] && OMANY_SLOT_S="" || OMANY_SLOT_S="$v"; }
-v=$(bar slotX) && [[ -n $v ]] && { [[ $v == none ]] && OMANY_SLOT_X="" || OMANY_SLOT_X="$v"; }
+# shellcheck source=omany-settings
+source "$(dirname "$(readlink -f "$0")")/omany-settings"
+config="$omany_config"
 
 app_id="org.omarchy.herdr${OMANY_SESSION:+.$OMANY_SESSION}"
 log="${XDG_STATE_HOME:-$HOME/.local/state}/omany.log"
@@ -69,18 +50,19 @@ if ! command -v herdr >/dev/null; then
   exec omarchy-agent --pick
 fi
 
+# `omany --focus <agent-name>`: bring the Herdr window forward on that agent.
+if [[ ${1:-} == --focus ]]; then
+  window=$(hyprctl clients -j | jq -r --arg c "$app_id" '.[] | select(.class == $c) | .address' | head -n1)
+  [[ -n $window ]] && hyprctl dispatch "hl.dsp.focus({ window = \"address:$window\" })" >/dev/null
+  h agent focus "${2:-}" >/dev/null || fail "could not focus ${2:-}"
+  exit 0
+fi
+
 agent=$(omarchy-default-agent)
 [[ -z $agent ]] && exec omarchy-agent --pick
 
 if [[ ${1:-} == --other ]]; then
-  other="$OMANY_OTHER_AGENT"
-  if [[ -z $other ]]; then
-    case "$agent" in
-    claude) other=codex ;;
-    codex) other=claude ;;
-    *) fail "no counterpart for $agent; set OMANY_OTHER_AGENT in $config" ;;
-    esac
-  fi
+  other=$(omany_other_agent "$agent")
   command -v "$other" >/dev/null || fail "$other is not installed"
   agent="$other"
 elif [[ ${1:-} == --slot ]]; then
@@ -89,7 +71,7 @@ elif [[ ${1:-} == --slot ]]; then
   x) slot_agent="$OMANY_SLOT_X" ;;
   *) fail "unknown slot '${2:-}' (use s or x)" ;;
   esac
-  [[ -n $slot_agent ]] || fail "no agent assigned to slot ${2^^}; pick one in the omany bar settings"
+  [[ -n $slot_agent ]] || fail "no agent assigned to slot ${2^^}; pick one in the omany panel"
   command -v "$slot_agent" >/dev/null || fail "$slot_agent is not installed"
   agent="$slot_agent"
 fi

@@ -1,0 +1,62 @@
+# Sourced by bin/omany and bin/omany-state: resolves settings and agent names the
+# same way for the launcher and the panel.
+#
+# Order: defaults, then ~/.config/omany/config, then whatever was changed in the
+# bar settings (shell.json only stores keys the user changed).
+
+OMANY_WORKSPACE="${OMANY_WORKSPACE:-agents}"
+OMANY_CWD="${OMANY_CWD:-}"
+OMANY_LOAD_SKILL="${OMANY_LOAD_SKILL:-true}"
+OMANY_SESSION="${OMANY_SESSION:-}"
+OMANY_OTHER_AGENT="${OMANY_OTHER_AGENT:-}"
+OMANY_SLOT_S="${OMANY_SLOT_S:-}"
+OMANY_SLOT_X="${OMANY_SLOT_X:-}"
+
+omany_id="io.github.aiob3.omany"
+omany_config="${XDG_CONFIG_HOME:-$HOME/.config}/omany/config"
+# shellcheck source=/dev/null
+[[ -f $omany_config ]] && source "$omany_config"
+
+omany_bar_settings=$(jq -c --arg id "$omany_id" '[.bar.layout[]?[]? | objects | select(.id == $id)][0] // {}' \
+  "${XDG_CONFIG_HOME:-$HOME/.config}/omarchy/shell.json" 2>/dev/null) || omany_bar_settings="{}"
+omany_bar() { jq -r --arg k "$1" 'if has($k) then .[$k] | tostring else empty end' <<<"$omany_bar_settings"; }
+_v=$(omany_bar workspace) && [[ -n $_v ]] && OMANY_WORKSPACE="$_v"
+_v=$(omany_bar cwd) && [[ -n $_v ]] && OMANY_CWD="$_v"
+_v=$(omany_bar loadSkill) && [[ -n $_v ]] && OMANY_LOAD_SKILL="$_v"
+_v=$(omany_bar otherAgent) && [[ -n $_v ]] && { [[ $_v == auto ]] && OMANY_OTHER_AGENT="" || OMANY_OTHER_AGENT="$_v"; }
+_v=$(omany_bar slotS) && [[ -n $_v ]] && { [[ $_v == none ]] && OMANY_SLOT_S="" || OMANY_SLOT_S="$_v"; }
+_v=$(omany_bar slotX) && [[ -n $_v ]] && { [[ $_v == none ]] && OMANY_SLOT_X="" || OMANY_SLOT_X="$_v"; }
+unset _v
+
+# Every agent omany can start: the ones Herdr drives, then the plain ones.
+OMANY_AGENTS=(claude codex gemini opencode copilot grok cursor-agent hermes omp pi openclaw crush muse)
+
+# installed | installer (an Omarchy stub that installs on first run) | missing.
+# Reads the file, never runs it: running a stub installs the agent.
+omany_agent_state() {
+  local path spec
+  path=$(command -v "$1" 2>/dev/null) || { echo missing; return; }
+  # mise shims and real binaries: installed. -I skips binary files, since the mise
+  # binary itself contains the text matched below.
+  grep -qsI . "$path" || { echo installed; return; }
+  # Omarchy's first-run stubs name the mise tool they install; ask mise whether it
+  # is there (read-only), else the stub would install it when run.
+  spec=$(grep -oE "mise (use -g --quiet|where) ['\"][^'\"]+['\"]" "$path" | head -n1 | sed -E "s/^mise (use -g --quiet|where) ['\"]//; s/['\"]$//")
+  if [[ -n $spec ]]; then
+    mise where "$spec" >/dev/null 2>&1 && echo installed || echo installer
+    return
+  fi
+  echo installed
+}
+
+# The counterpart for Z and right-click: auto swaps Claude Code and Codex, and
+# any other default gets Claude Code (Codex when Claude Code is missing).
+omany_other_agent() {
+  local default="$1"
+  if [[ -n $OMANY_OTHER_AGENT ]]; then echo "$OMANY_OTHER_AGENT"; return; fi
+  case "$default" in
+  claude) echo codex ;;
+  codex) echo claude ;;
+  *) [[ $(omany_agent_state claude) == missing ]] && echo codex || echo claude ;;
+  esac
+}

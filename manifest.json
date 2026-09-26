@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.aiob3.omany",
   "name": "omany",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "author": "Brito",
   "license": "MIT",
   "homepage": "https://github.com/aiob3/omany",
@@ -18,7 +18,7 @@
   },
   "barWidget": {
     "displayName": "omany",
-    "description": "Click for your default agent in Herdr, right-click for the other one.",
+    "description": "Panel to open your agents in Herdr: default, the other one, two free slots, what is running, and settings.",
     "category": "AI",
     "allowMultiple": false,
     "defaultSection": "center",
