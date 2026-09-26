@@ -153,6 +153,11 @@ h tab focus "$tab" >/dev/null
 echo "agent=$name kind=${kind:-plain} ws=$ws tab=$tab pane=$pane cwd=$cwd"
 
 if [[ -n $plain ]]; then
+  # LionTUI offers `git init` in a folder without git (for checkpoints and /undo).
+  # The agents' home folder is not a project, so point people to the right answer.
+  if [[ $agent == lion && ! -e $cwd/.git ]]; then
+    notify-send "omany · LionTUI" "LionTUI will offer git init. Here, answer N: it runs fine without it. For checkpoints and /undo, open it in a project folder that already uses git." 2>/dev/null
+  fi
   h tab rename "$tab" "$name" >/dev/null 2>&1
   h pane run "$pane" "$plain" >/dev/null || fail "could not run $plain in $pane"
   echo "ok: $name in $pane (plain command: $plain)"
