@@ -24,7 +24,9 @@ if command -v herdr >/dev/null && workspaces=$("${herdr_cmd[@]}" workspace list 
   ws=$(jq -r --arg l "$OMANY_WORKSPACE" '.result.workspaces[] | select(.label == $l) | .workspace_id' <<<"$workspaces" | head -n1)
   if [[ -n $ws ]]; then
     running=$("${herdr_cmd[@]}" agent list 2>/dev/null | jq -c --arg ws "$ws" \
-      '[.result.agents[]? | select(.workspace_id == $ws) | {name, status: (.agent_status // "unknown"), pane: .pane_id}]') || running="[]"
+      '[.result.agents[]? | select(.workspace_id == $ws)
+        | {name: (.name // ((.agent // "agent") + " (unnamed)")), target: (.name // .pane_id),
+           status: (.agent_status // "unknown"), pane: .pane_id}]') || running="[]"
   fi
 fi
 

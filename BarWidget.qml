@@ -195,7 +195,7 @@ Panel {
                 foreground: root.foreground
                 fontFamily: root.fontFamily
                 bordered: true
-                onClicked: root.run(["--focus", modelData.name])
+                onClicked: root.run(["--focus", modelData.target || modelData.name])
               }
             }
           }
@@ -223,10 +223,12 @@ Panel {
           PanelSeparator { foreground: root.foreground }
 
           Button {
+            width: parent.width
             text: root.showSettings ? "Hide settings" : "Settings"
             iconText: "󰒓"
             foreground: root.foreground
             fontFamily: root.fontFamily
+            bordered: true
             onClicked: root.showSettings = !root.showSettings
           }
 
