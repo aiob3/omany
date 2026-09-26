@@ -18,6 +18,5 @@ omarchy plugin disable "$id" >/dev/null || { notify-send -u critical "omany" "Re
 omarchy plugin enable "$id" --after omarchy.clock >/dev/null || { notify-send -u critical "omany" "Reset failed at enable" 2>/dev/null; exit 1; }
 
 [[ -f $config ]] && mv "$config" "$config.bak-$stamp"
-touch "$state/placed"
 
 notify-send "omany" "Settings reset. Backups in $state" 2>/dev/null

@@ -1,19 +1,13 @@
 #!/bin/bash
-# Move the omany bar icon to the section chosen in its settings (left, center,
-# right). In the center it sits right after the clock. Does nothing when it is
-# already in place, so the reload that a move triggers cannot loop.
+# Move the omany bar icon to the section the user picked in its settings (left,
+# center, right). In the center it sits right after the clock. Runs only when that
+# setting changes, and does nothing when the icon is already in place, so the
+# reload that a move triggers cannot loop.
 
 set -uo pipefail
 
 id="io.github.aiob3.omany"
 clock="omarchy.clock"
-# --first-run: place it after the clock once, then never again on load.
-marker="${XDG_STATE_HOME:-$HOME/.local/state}/omany/placed"
-if [[ ${1:-} == --first-run ]]; then
-  [[ -e $marker ]] && exit 0
-  mkdir -p "$(dirname "$marker")" && touch "$marker"
-  set -- center
-fi
 want="${1:-center}"
 [[ $want =~ ^(left|center|right)$ ]] || exit 0
 

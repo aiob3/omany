@@ -41,11 +41,10 @@ Panel {
     return out
   }
 
-  // The first load puts the icon right after the clock, once. After that it only
-  // moves when Position changes, so moving it by hand (or with Omaplug) sticks.
+  // The icon only moves when the user changes Position in the settings; omany
+  // never rearranges the bar on its own.
   readonly property string position: (settings && settings.position) || ""
   onPositionChanged: if (position) Quickshell.execDetached([root.pluginDir + "/bin/omany-place", position])
-  Component.onCompleted: Quickshell.execDetached([root.pluginDir + "/bin/omany-place", "--first-run"])
 
   function refresh() { if (!stateProcess.running) stateProcess.running = true }
 

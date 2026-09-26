@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "id": "io.github.aiob3.omany",
   "name": "omany",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "author": "Brito",
   "license": "MIT",
   "homepage": "https://github.com/aiob3/omany",
-  "description": "Open Omarchy's default coding agent inside Herdr: one workspace, a new tab per keypress, and the Omarchy skill loaded on the first turn.",
+  "description": "Every AI agent opens the same way: inside Herdr, one tab per agent, four key slots, and the Omarchy skill loaded on the first turn.",
   "kinds": [
     "overlay",
     "bar-widget"
@@ -151,10 +151,8 @@
     ]
   },
   "tags": [
-    "herdr",
-    "agents",
-    "claude",
-    "codex",
-    "hyprland"
+    "ai",
+    "workspaces",
+    "launcher"
   ]
 }

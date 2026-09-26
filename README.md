@@ -1,30 +1,30 @@
 # omany
 
-Open Omarchy's default coding agent **inside [Herdr](https://github.com/herdrdev/herdr)** instead of a
-loose terminal window.
+**Every AI agent opens the same way: inside [Herdr](https://github.com/herdrdev/herdr),
+one tab per agent, four key slots, and the Omarchy skill loaded on the first turn.**
 
-Omarchy's agent key starts Claude Code, Codex, or whichever agent you picked as
-the default in its own terminal. Each press opens another isolated window. With
-omany, every agent lands in the same Herdr window:
+![omany panel next to Herdr](preview.png)
 
-- **First press:** opens Herdr (starting its server if needed) with a dedicated
-  `agents` workspace, and starts your default agent there.
-- **Next presses:** bring that window forward and open a **new tab** with one more
-  agent. The window is never duplicated.
-- **Named agents:** each agent gets a unique Herdr name (`claude`, `claude-2`,
-  `codex`...), so agents can find and prompt each other with `herdr agent prompt`.
-- **The other agent, one modifier away:** a second key starts the counterpart of
-  your default agent (Claude Code when the default is Codex, Codex when it is
-  Claude) in the same workspace, so the two can work side by side.
-- **A bar icon:** click for your default agent, right-click for the other one.
-  It sits right after the clock by default.
-- **Two optional slots:** Super+Ctrl+Shift+S and X start any other agent you
-  pick in the settings. They are empty until you choose; Hermes and Grok, which
-  Omarchy can install, are natural picks.
-- **Omarchy-aware from the first turn:** Claude Code and Codex get the `omarchy`
-  skill loaded as soon as they start, if the skill is installed for them.
+Omarchy's agent key opens your default agent in a loose terminal window, a new one
+per press. Herdr plugins show agents that are already running, but nothing opens
+them in a consistent way. omany does:
 
-![omany panel and Herdr](preview.png)
+- **One place for every agent.** The first press opens Herdr (starting its server if
+  needed) with a dedicated workspace; every press after that adds a tab. The window
+  is never duplicated.
+- **Four predictable slots.** A is your default agent, Z its counterpart (Claude Code
+  ↔ Codex), S and X are free slots you fill in the panel.
+- **Named agents that can talk.** Each agent gets a unique Herdr name (`claude`,
+  `claude-2`, `codex`...), so agents can find and prompt each other with
+  `herdr agent prompt`.
+- **Omarchy-aware from the first turn.** Claude Code and Codex start with the
+  `omarchy` skill loaded, when it is installed for them.
+- **A panel on the bar.** Pick the agent for each slot, open any of them, see what is
+  running and focus it, and see which agents are installed and which only install
+  on first use.
+
+omany is the first plugin of **omonorepo**, a series that normalizes how Omarchy
+plugins fit with what you already have.
 
 | Panel | Settings | Herdr |
 |---|---|---|
@@ -34,12 +34,12 @@ omany, every agent lands in the same Herdr window:
 
 - Omarchy with the Quattro shell (`omarchy plugin` commands)
 - [Herdr](https://github.com/herdrdev/herdr) (`herdr` on `PATH`)
-- A default agent: `omarchy default agent <name>`
 - `jq`
+- At least one agent Herdr can drive: Claude Code, Codex, Gemini, OpenCode, Copilot,
+  Grok, Cursor Agent, Hermes, OMP or Pi. OpenClaw, Crush and Muse also work, as a
+  plain command in a Herdr tab.
 
-Without Herdr, omany falls back to the stock `omarchy agent` launcher. Agents Herdr
-cannot recognize (OpenClaw, Crush, Muse) still open in a Herdr tab as a plain
-command, so they get the tab but not Herdr's agent status or `herdr agent prompt`.
+Without Herdr, omany falls back to Omarchy's own `omarchy agent` launcher.
 
 ## Install
 
@@ -47,7 +47,14 @@ command, so they get the tab but not Herdr's agent status or `herdr agent prompt
 omarchy plugin add https://github.com/aiob3/omany.git --enable
 ```
 
-Then point the agent key at omany in `~/.config/hypr/bindings.lua`:
+Omarchy places the icon on the bar. To put it right after the clock:
+
+```bash
+omarchy bar move io.github.aiob3.omany --section center --after omarchy.clock
+```
+
+Then add the keys to `~/.config/hypr/bindings.lua`. The first line frees
+Super+Ctrl+Shift+A, which Omarchy uses for its own agent launcher:
 
 ```lua
 hl.unbind("SUPER + SHIFT + CTRL + A")
@@ -57,77 +64,116 @@ o.bind("SUPER + CTRL + SHIFT + S", "Slot S agent in Herdr", "omarchy-shell shell
 o.bind("SUPER + CTRL + SHIFT + X", "Slot X agent in Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"slot\":\"x\"}'")
 ```
 
-| Key | Agent |
-|---|---|
-| Super+Ctrl+Shift+A | your Omarchy default agent |
-| Super+Ctrl+Shift+Z | the other one (Claude Code <-> Codex) |
-| Super+Ctrl+Shift+S | slot S (empty until you pick an agent) |
-| Super+Ctrl+Shift+X | slot X (empty until you pick an agent) |
-
 Check the result with `hyprctl reload && hyprctl configerrors`.
 
-To open the panel from a key, bind `omarchy-shell omany toggle`
-(`omarchy-shell omany settings` opens it on the settings).
+## Use
+
+| Key | Opens |
+|---|---|
+| Super+Ctrl+Shift+A | slot A: your default agent |
+| Super+Ctrl+Shift+Z | slot Z: its counterpart |
+| Super+Ctrl+Shift+S | slot S: the agent you picked, or a notice if it is empty |
+| Super+Ctrl+Shift+X | slot X: the agent you picked, or a notice if it is empty |
+
+Click the bar icon to open the panel. To open it from a key, bind
+`omarchy-shell omany toggle`; `omarchy-shell omany settings` opens it on the settings.
 
 ## Settings
 
-Open the bar settings and pick **omany**. You can change:
+In the panel, each slot has its own picker. Under **Settings**:
 
 | Setting | Default | What it does |
 |---|---|---|
 | Position | center | Left, center (right after the clock) or right side of the bar |
-| Agent (A) | omarchy | Agent for the A key; omarchy follows your Omarchy default agent |
-| Other agent | auto | Agent for the Z key; auto swaps Claude Code and Codex |
-| Slot S agent | none | Optional agent for the S key |
-| Slot X agent | none | Optional agent for the X key |
 | Herdr workspace | agents | Label of the workspace where agents open |
-| Working folder | empty | Empty follows `omarchy agent` (~/Work when launched from home) |
+| Working folder | empty | Empty follows `omarchy agent` (~/Work when launched from home); `~` works |
 | Load the Omarchy skill | on | Sends `/omarchy` or `$omarchy` on the first turn |
 
+Slot A set to `omarchy` follows your Omarchy default agent; picking another agent
+there changes only omany, never Omarchy's default. Slot Z set to `auto` swaps Claude
+Code and Codex, and opens Claude Code for any other default.
+
+**Reset omany to a fresh install** (two clicks) clears every omany setting through
+Omarchy's own `omarchy plugin disable` and `enable`.
+
 Without the bar, the same settings go in `~/.config/omany/config` as plain shell
-assignments. Anything changed in the bar settings wins:
+assignments; anything changed in the panel wins:
 
 ```bash
 OMANY_WORKSPACE="agents"   # label of the Herdr workspace
-OMANY_CWD=""               # empty = same rule as `omarchy agent` (~/Work when launched from $HOME)
-OMANY_LOAD_SKILL=true      # load the omarchy skill on the first turn (Claude Code, Codex)
-OMANY_SESSION=""           # named Herdr session; empty = the default one
-OMANY_SLOT_A=""            # agent for the A key; empty = Omarchy default agent
-OMANY_OTHER_AGENT=""       # agent for the Z key; empty = Claude Code <-> Codex
-OMANY_SLOT_S=""            # optional agent for the S key
-OMANY_SLOT_X=""            # optional agent for the X key
+OMANY_CWD=""               # empty = same rule as `omarchy agent`
+OMANY_LOAD_SKILL=true      # load the omarchy skill on the first turn
+OMANY_SESSION=""           # named Herdr session (its own window); empty = the default one
+OMANY_SLOT_A=""            # agent for A; empty = Omarchy default agent
+OMANY_OTHER_AGENT=""       # agent for Z; empty = Claude Code <-> Codex
+OMANY_SLOT_S=""            # agent for S; empty = unassigned
+OMANY_SLOT_X=""            # agent for X; empty = unassigned
 ```
-
-Each named session gets its own window.
-
-To start over, open the panel, go to **Settings** and click **Reset omany to a fresh
-install** twice. It goes through Omarchy's own `omarchy plugin disable` and
-`enable`, which drop every omany setting and put a clean icon back after the
-clock, and sets `~/.config/omany/config` aside as a `.bak` file. A copy of
-`shell.json` is kept in `~/.local/state/omany/` as a way back.
 
 ## Heads-up: unattended mode
 
 omany starts agents with the **same flags `omarchy agent` uses**, and those skip
 approval prompts: `claude --permission-mode auto`, `codex --approve-for-me`,
-`gemini --yolo` and so on. That is Omarchy's default for this key. If you want
-approvals back, launch that agent yourself inside Herdr instead.
+`gemini --yolo` and so on. That is Omarchy's default for its agent key. If you want
+approvals back, start that agent yourself inside Herdr instead.
 
-When an agent stops at a startup question (folder trust, login...), omany waits
-up to a minute for you to answer it. If nobody answers, it skips the skill and
-sends a notification instead.
+## How it works
+
+- `bin/omany` is the launcher. It resolves the agent for the slot, focuses the Herdr
+  window or opens one (`org.omarchy.herdr`), creates the workspace or a new tab with
+  `herdr workspace create` / `herdr tab create`, starts the agent with
+  `herdr agent start` under a unique name, and sends the skill with
+  `herdr agent prompt`.
+- Agents Herdr cannot recognize run with `herdr pane run` in the new tab.
+- When an agent stops at a startup question (folder trust, login), omany waits up to
+  a minute for you to answer, then skips the skill and sends a notification.
+- `bin/omany-state` builds the panel's snapshot: slots, installed agents, and agents
+  running in the workspace. It finds out whether an agent is installed by reading its
+  launcher file and asking `mise where`; it never runs an agent binary, because some
+  of Omarchy's launchers install the agent the first time they run.
+- The bar widget and the key bindings both go through the plugin's overlay entry
+  (`omarchy-shell shell toggle|summon io.github.aiob3.omany`).
+
+## What it writes
+
+| Where | What | When |
+|---|---|---|
+| `~/.config/omarchy/shell.json` | omany's own entry on the bar and its settings, through `omarchy bar set` | when you change a setting in the panel |
+| bar placement | moves only omany's icon, through `omarchy bar move` | when you change Position |
+| `~/.local/state/omany.log` | one line per launch and any error | every launch |
+| `~/.local/state/omany/` | copies of `shell.json` | before a Reset |
+| `~/.config/omany/config.bak-*` | your manual config, set aside | on Reset, only if it exists |
+
+omany never edits `bindings.lua`, never changes Omarchy's default agent, and never
+rearranges other widgets.
+
+## What it deliberately does not do
+
+- It does not monitor agents across machines or show their usage. Herdr plugins such
+  as `jankeesvw.herdr` and `njpatel.omaherdr` already do that well, and they work
+  alongside omany.
+- It does not install agents. The panel tells you which ones only install on first use.
+- It does not stop or kill agents; close their Herdr tab as usual.
 
 ## Troubleshooting
 
-Everything omany does is logged to `~/.local/state/omany.log`.
+- **Nothing happens on a key:** check `~/.local/state/omany.log`; every launch and
+  error is there.
+- **A slot key shows "no agent assigned":** pick an agent for that slot in the panel.
+- **An agent opens but the skill is not sent:** it was waiting at a startup question;
+  answer it, then send `/omarchy` (Claude Code) or `$omarchy` (Codex) yourself.
+- **The icon does not show after an update:** run `omarchy restart shell`.
+- **Agents open in the wrong workspace:** check **Herdr workspace** in the panel's
+  settings; a Reset brings it back to `agents`.
 
 ## Uninstall
 
 ```bash
 omarchy plugin remove io.github.aiob3.omany
+rm -rf ~/.config/omany ~/.local/state/omany ~/.local/state/omany.log
 ```
 
-Then remove the binding lines above. The default key comes back.
+Then remove the binding lines you added. Omarchy's own agent key comes back.
 
 ## License
 
