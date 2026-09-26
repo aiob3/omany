@@ -1,5 +1,9 @@
 # omany
 
+**🇺🇸 [English](#english) | 🇧🇷 [Tupiniquim](#tupiniquim)**
+
+<a id="english"></a>
+
 **Every AI agent opens the same way: inside [Herdr](https://github.com/herdrdev/herdr),
 one tab per agent, four key slots, and the Omarchy skill loaded on the first turn.**
 
@@ -183,3 +187,74 @@ MIT
 
 The bar icon is `exchange-dollar-line` from [Remix Icon](https://remixicon.com),
 licensed under the Apache License 2.0.
+
+---
+
+<a id="tupiniquim"></a>
+
+## 🇧🇷 Tupiniquim
+
+**Todo agente de IA abre do mesmo jeito: dentro do [Herdr](https://github.com/herdrdev/herdr),
+uma aba por agente, quatro vagas no teclado e o skill do Omarchy carregado no primeiro turno.**
+
+Feito no Brasil. O omany é o primeiro plugin do **omonorepo**, uma série que
+normatiza como os plugins do Omarchy convivem com o que você já tem instalado.
+
+A tecla de agente do Omarchy abre o seu agente padrão numa janela de terminal solta,
+uma nova a cada toque. Os plugins do Herdr mostram agentes que já estão rodando, mas
+nada os abre de um jeito uniforme. O omany faz isso:
+
+- **Um lugar para todos os agentes.** O primeiro toque abre o Herdr (e o servidor
+  dele, se preciso) com um workspace próprio; cada toque seguinte abre uma aba. A
+  janela nunca duplica.
+- **Quatro vagas previsíveis.** A é o seu agente padrão, Z o par dele (Claude Code ↔
+  Codex), S e X são vagas livres que você preenche no painel.
+- **Agentes com nome, que conversam entre si.** Cada agente recebe um nome único no
+  Herdr (`claude`, `claude-2`, `codex`...), e um pode mandar tarefa ao outro com
+  `herdr agent prompt`.
+- **O Omarchy no contexto desde o primeiro turno.** Claude Code e Codex já começam com
+  o skill `omarchy` carregado, quando ele está instalado.
+- **Um painel na barra.** Escolha o agente de cada vaga, abra qualquer um, veja o que
+  está rodando e foque nele, e veja quais agentes estão instalados e quais só
+  instalam no primeiro uso.
+
+### Instalar
+
+```bash
+omarchy plugin add https://github.com/aiob3/omany.git --enable
+omarchy bar move io.github.aiob3.omany --section center --after omarchy.clock   # opcional: ícone depois do relógio
+```
+
+As teclas vão no `~/.config/hypr/bindings.lua`, com as mesmas linhas da seção
+[Install](#install) em inglês. Depois, `hyprctl reload && hyprctl configerrors`.
+
+| Tecla | Abre |
+|---|---|
+| Super+Ctrl+Shift+A | vaga A: o seu agente padrão |
+| Super+Ctrl+Shift+Z | vaga Z: o par dele |
+| Super+Ctrl+Shift+S / X | vagas S e X: o agente que você escolheu, ou um aviso se estiver vazia |
+
+### Atenção: modo sem aprovação
+
+O omany abre os agentes com as **mesmas opções que o `omarchy agent` usa**, e elas
+pulam as confirmações (`claude --permission-mode auto`, `codex --approve-for-me`,
+`gemini --yolo`...). Se quiser as confirmações de volta, abra esse agente você mesmo
+dentro do Herdr.
+
+### O que ele grava
+
+Só as próprias configurações (pelo `omarchy bar set`, quando você muda algo no
+painel), a posição do próprio ícone (quando você muda Position), um log em
+`~/.local/state/omany.log` e cópias do `shell.json` antes de um Reset. Nunca mexe no
+`bindings.lua`, nunca troca o agente padrão do Omarchy e nunca reorganiza outros
+widgets. O detalhe está nas seções [How it works](#how-it-works) e
+[What it writes](#what-it-writes).
+
+### Remover
+
+```bash
+omarchy plugin remove io.github.aiob3.omany
+rm -rf ~/.config/omany ~/.local/state/omany ~/.local/state/omany.log
+```
+
+Depois, apague as linhas de tecla que você adicionou.
