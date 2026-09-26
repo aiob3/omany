@@ -1,0 +1,21 @@
+name: Bug report
+description: Something in omany does not work as described.
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: What happened
+      description: What you did (key, panel action) and what you saw.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: omany log
+      description: The last lines of ~/.local/state/omany.log.
+      render: text
+  - type: input
+    attributes:
+      label: Versions
+      description: omany, Omarchy, Herdr, and the agent involved.
+    validations:
+      required: true

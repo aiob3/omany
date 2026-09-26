@@ -1,0 +1,27 @@
+name: Agent test report
+description: Results of running an agent the README lists as not tested yet.
+labels: [agent-test]
+body:
+  - type: dropdown
+    attributes:
+      label: Agent
+      options: [Gemini, Cursor Agent, Hermes, OMP, Pi, OpenCode, OpenClaw, Crush, Muse, Other]
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: What worked
+      options:
+        - label: It opened in a new Herdr tab with a unique name
+        - label: A second press opened another tab, not another window
+        - label: It showed up under Running now in the panel, and Focus worked
+  - type: textarea
+    attributes:
+      label: Notes and omany log
+      render: text
+  - type: input
+    attributes:
+      label: Versions
+      description: omany, Omarchy, Herdr, and the agent.
+    validations:
+      required: true

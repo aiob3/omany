@@ -1,0 +1,38 @@
+name: compliance
+
+# Every pull request and every push to main goes through the omonorepo compliance
+# rules (https://github.com/aiob3/omonorepo/blob/main/compliance/RULES.md), the same
+# check the maintainers run before a release.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  omono-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the plugin
+        uses: actions/checkout@v4
+        with:
+          path: omany
+          fetch-depth: 0
+
+      - name: Check out the omonorepo compliance rules
+        uses: actions/checkout@v4
+        with:
+          repository: aiob3/omonorepo
+          path: omonorepo
+
+      - name: Tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq imagemagick file >/dev/null
+
+      - name: Shell syntax
+        run: for f in omany/bin/*; do bash -n "$f"; done
+
+      - name: omono-check
+        run: omonorepo/compliance/bin/omono-check --ci omany
