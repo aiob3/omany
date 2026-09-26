@@ -12,7 +12,8 @@ import qs.Ui
 Panel {
   id: root
   moduleName: "io.github.aiob3.omany"
-  manageIpc: false
+  // `omarchy-shell omany open|close|toggle` opens the panel, e.g. from a key.
+  ipcTarget: "omany"
 
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight

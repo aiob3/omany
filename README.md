@@ -62,6 +62,8 @@ o.bind("SUPER + CTRL + SHIFT + X", "Slot X agent in Herdr", "omarchy-shell shell
 
 Check the result with `hyprctl reload && hyprctl configerrors`.
 
+To open the panel from a key, bind `omarchy-shell omany toggle`.
+
 ## Settings
 
 Open the bar settings and pick **omany**. You can change:
