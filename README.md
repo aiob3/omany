@@ -24,7 +24,11 @@ omany, every agent lands in the same Herdr window:
 - **Omarchy-aware from the first turn:** Claude Code and Codex get the `omarchy`
   skill loaded as soon as they start, if the skill is installed for them.
 
-<!-- screenshots: assets/ -->
+![omany panel and Herdr](preview.png)
+
+| Panel | Settings | Herdr |
+|---|---|---|
+| ![Panel](assets/screenshots/panel.png) | ![Settings](assets/screenshots/settings.png) | ![Codex in Herdr with the Omarchy skill loaded](assets/screenshots/herdr.png) |
 
 ## Requirements
 
