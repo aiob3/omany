@@ -14,7 +14,7 @@
   "keepLoaded": false,
   "entryPoints": {
     "overlay": "Overlay.qml",
-    "barWidget": "Widget.qml"
+    "barWidget": "BarWidget.qml"
   },
   "barWidget": {
     "displayName": "omany",
