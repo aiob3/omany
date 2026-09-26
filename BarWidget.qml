@@ -28,6 +28,8 @@ Panel {
   property bool showSettings: false
   property bool confirmReset: false
   property bool savedFlash: false
+  // Set while the user types in a text setting, so a refresh never overwrites it.
+  property bool textDirty: false
 
   readonly property var installedNames: namesWithState("installed")
   readonly property var installerNames: namesWithState("installer")
@@ -62,7 +64,7 @@ Panel {
   // Text fields are filled from the saved values when settings open, and only
   // written back on Save or Enter, so the periodic refresh never clobbers typing.
   function fillTextSettings() {
-    if (!root.st.settings) return
+    if (!root.st.settings || root.textDirty) return
     workspaceField.text = root.st.settings.workspace || ""
     cwdField.text = root.st.settings.cwd || ""
   }
@@ -72,6 +74,7 @@ Panel {
     var ws = workspaceField.text.trim()
     if (ws && ws !== root.st.settings.workspace) root.setOption("workspace", ws)
     if (cwdField.text.trim() !== root.st.settings.cwd) root.setOption("cwd", cwdField.text.trim())
+    root.textDirty = false
     root.savedFlash = true
     savedTimer.restart()
   }
@@ -79,6 +82,7 @@ Panel {
   onShowSettingsChanged: if (showSettings) fillTextSettings()
 
   onOpenedChanged: if (opened) {
+    root.textDirty = false
     refresh()
     Qt.callLater(function() { keyCatcher.forceActiveFocus() })
   }
@@ -100,6 +104,7 @@ Panel {
       waitForEnd: true
       onStreamFinished: {
         try { root.st = JSON.parse(String(text || "{}")) } catch (e) { console.warn("omany: invalid state", e) }
+        root.fillTextSettings()
       }
     }
   }
@@ -300,6 +305,7 @@ Panel {
                 id: workspaceField
                 width: Style.spacing.dropdownWidth
                 foreground: root.foreground
+                onTextEdited: root.textDirty = true
                 onAccepted: root.saveTextSettings()
               }
             }
@@ -310,6 +316,7 @@ Panel {
                 width: Style.spacing.dropdownWidth
                 placeholderText: "same as omarchy agent"
                 foreground: root.foreground
+                onTextEdited: root.textDirty = true
                 onAccepted: root.saveTextSettings()
               }
             }
