@@ -14,9 +14,12 @@
 #   OMANY_LOAD_SKILL=true      # load the omarchy skill on the first turn
 #   OMANY_SESSION=""           # named Herdr session; empty = default
 #   OMANY_OTHER_AGENT=""       # agent for `omany --other`; empty = claude <-> codex
+#   OMANY_SLOT_S="hermes"      # agent for `omany --slot s` (ships with Omarchy)
+#   OMANY_SLOT_X="grok"        # agent for `omany --slot x` (ships with Omarchy)
 #
 # `omany --other` starts the counterpart of the default agent instead (Claude when
-# the default is Codex, Codex when it is Claude), under the same rules.
+# the default is Codex, Codex when it is Claude). `omany --slot s|x` starts the
+# agent assigned to that slot. Same rules for all of them.
 # Log: ${XDG_STATE_HOME:-~/.local/state}/omany.log
 
 set -uo pipefail
@@ -26,6 +29,8 @@ OMANY_CWD="${OMANY_CWD:-}"
 OMANY_LOAD_SKILL="${OMANY_LOAD_SKILL:-true}"
 OMANY_SESSION="${OMANY_SESSION:-}"
 OMANY_OTHER_AGENT="${OMANY_OTHER_AGENT:-}"
+OMANY_SLOT_S="${OMANY_SLOT_S:-hermes}"
+OMANY_SLOT_X="${OMANY_SLOT_X:-grok}"
 config="${XDG_CONFIG_HOME:-$HOME/.config}/omany/config"
 # shellcheck source=/dev/null
 [[ -f $config ]] && source "$config"
@@ -39,6 +44,8 @@ v=$(bar workspace) && [[ -n $v ]] && OMANY_WORKSPACE="$v"
 v=$(bar cwd) && [[ -n $v ]] && OMANY_CWD="$v"
 v=$(bar loadSkill) && [[ -n $v ]] && OMANY_LOAD_SKILL="$v"
 v=$(bar otherAgent) && [[ -n $v ]] && { [[ $v == auto ]] && OMANY_OTHER_AGENT="" || OMANY_OTHER_AGENT="$v"; }
+v=$(bar slotS) && [[ -n $v ]] && { [[ $v == none ]] && OMANY_SLOT_S="" || OMANY_SLOT_S="$v"; }
+v=$(bar slotX) && [[ -n $v ]] && { [[ $v == none ]] && OMANY_SLOT_X="" || OMANY_SLOT_X="$v"; }
 
 app_id="org.omarchy.herdr${OMANY_SESSION:+.$OMANY_SESSION}"
 log="${XDG_STATE_HOME:-$HOME/.local/state}/omany.log"
@@ -76,6 +83,15 @@ if [[ ${1:-} == --other ]]; then
   fi
   command -v "$other" >/dev/null || fail "$other is not installed"
   agent="$other"
+elif [[ ${1:-} == --slot ]]; then
+  case "${2:-}" in
+  s) slot_agent="$OMANY_SLOT_S" ;;
+  x) slot_agent="$OMANY_SLOT_X" ;;
+  *) fail "unknown slot '${2:-}' (use s or x)" ;;
+  esac
+  [[ -n $slot_agent ]] || fail "no agent assigned to slot ${2^^}; pick one in the omany bar settings"
+  command -v "$slot_agent" >/dev/null || fail "$slot_agent is not installed"
+  agent="$slot_agent"
 fi
 
 # Same unattended flags as omarchy-agent, mapped to Herdr agent kinds.

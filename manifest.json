@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.aiob3.omany",
   "name": "omany",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": "Brito",
   "license": "MIT",
   "homepage": "https://github.com/aiob3/omany",
@@ -54,6 +54,46 @@
         ],
         "defaultValue": "auto",
         "description": "Agent for right-click and the second key. Auto swaps Claude Code and Codex."
+      },
+      {
+        "key": "slotS",
+        "type": "enum",
+        "label": "Slot S agent",
+        "options": [
+          "none",
+          "claude",
+          "codex",
+          "gemini",
+          "opencode",
+          "copilot",
+          "grok",
+          "cursor-agent",
+          "hermes",
+          "omp",
+          "pi"
+        ],
+        "defaultValue": "hermes",
+        "description": "Agent for Super+Ctrl+Shift+S. Hermes ships with Omarchy. None leaves the slot empty."
+      },
+      {
+        "key": "slotX",
+        "type": "enum",
+        "label": "Slot X agent",
+        "options": [
+          "none",
+          "claude",
+          "codex",
+          "gemini",
+          "opencode",
+          "copilot",
+          "grok",
+          "cursor-agent",
+          "hermes",
+          "omp",
+          "pi"
+        ],
+        "defaultValue": "grok",
+        "description": "Agent for Super+Ctrl+Shift+X. Grok ships with Omarchy. None leaves the slot empty."
       },
       {
         "key": "workspace",
