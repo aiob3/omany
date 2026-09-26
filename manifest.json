@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.aiob3.omany",
   "name": "omany",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "author": "Brito",
   "license": "MIT",
   "homepage": "https://github.com/aiob3/omany",
@@ -53,8 +53,7 @@
           "pi",
           "openclaw",
           "crush",
-          "muse",
-          "lion"
+          "muse"
         ],
         "defaultValue": "omarchy",
         "description": "Agent for left slot A and Super+Ctrl+Shift+A. Omarchy follows your Omarchy default agent; picking one here changes only omany."
@@ -77,8 +76,7 @@
           "pi",
           "openclaw",
           "crush",
-          "muse",
-          "lion"
+          "muse"
         ],
         "defaultValue": "auto",
         "description": "Agent for right-click and the second key. Auto swaps Claude Code and Codex."
@@ -101,8 +99,7 @@
           "pi",
           "openclaw",
           "crush",
-          "muse",
-          "lion"
+          "muse"
         ],
         "defaultValue": "none",
         "description": "Optional agent for Super+Ctrl+Shift+S. Empty until you pick one. Suggestions: Hermes, Grok and OpenClaw (Omarchy can install them), Gemini, OpenCode, Copilot."
@@ -125,8 +122,7 @@
           "pi",
           "openclaw",
           "crush",
-          "muse",
-          "lion"
+          "muse"
         ],
         "defaultValue": "none",
         "description": "Optional agent for Super+Ctrl+Shift+X. Empty until you pick one. Suggestions: Hermes, Grok and OpenClaw (Omarchy can install them), Gemini, OpenCode, Copilot."
