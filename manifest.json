@@ -53,7 +53,8 @@
           "pi",
           "openclaw",
           "crush",
-          "muse"
+          "muse",
+          "lion"
         ],
         "defaultValue": "omarchy",
         "description": "Agent for left slot A and Super+Ctrl+Shift+A. Omarchy follows your Omarchy default agent; picking one here changes only omany."
@@ -76,7 +77,8 @@
           "pi",
           "openclaw",
           "crush",
-          "muse"
+          "muse",
+          "lion"
         ],
         "defaultValue": "auto",
         "description": "Agent for right-click and the second key. Auto swaps Claude Code and Codex."
@@ -99,7 +101,8 @@
           "pi",
           "openclaw",
           "crush",
-          "muse"
+          "muse",
+          "lion"
         ],
         "defaultValue": "none",
         "description": "Optional agent for Super+Ctrl+Shift+S. Empty until you pick one. Suggestions: Hermes, Grok and OpenClaw (Omarchy can install them), Gemini, OpenCode, Copilot."
@@ -122,7 +125,8 @@
           "pi",
           "openclaw",
           "crush",
-          "muse"
+          "muse",
+          "lion"
         ],
         "defaultValue": "none",
         "description": "Optional agent for Super+Ctrl+Shift+X. Empty until you pick one. Suggestions: Hermes, Grok and OpenClaw (Omarchy can install them), Gemini, OpenCode, Copilot."

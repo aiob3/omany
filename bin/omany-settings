@@ -33,7 +33,7 @@ unset _v
 OMANY_CWD="${OMANY_CWD/#\~/$HOME}"
 
 # Every agent omany can start: the ones Herdr drives, then the plain ones.
-OMANY_AGENTS=(claude codex gemini opencode copilot grok cursor-agent hermes omp pi openclaw crush muse)
+OMANY_AGENTS=(claude codex gemini opencode copilot grok cursor-agent hermes omp pi openclaw crush muse lion)
 
 # installed | installer (an Omarchy stub that installs on first run) | missing.
 # Reads the file, never runs it: running a stub installs the agent.

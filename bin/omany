@@ -104,6 +104,7 @@ pi) kind=pi; args=() ;;
 openclaw) plain="omarchy-launch-openclaw --tui" ;;
 crush) plain="crush --yolo" ;;
 muse) plain="muse --approval-mode never" ;;
+lion) plain="lion" ;;   # LionTUI (LionLabs community): one binary, five providers
 *) fail "omany does not know how to start $agent" ;;
 esac
 [[ $OMANY_LOAD_SKILL == true && -n $skill && -d ${skill_dir:-/nonexistent} ]] || skill=""
