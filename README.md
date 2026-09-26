@@ -87,3 +87,8 @@ Then remove the binding lines above. The default key comes back.
 ## License
 
 MIT
+
+## Credits
+
+The bar icon is `exchange-dollar-line` from [Remix Icon](https://remixicon.com),
+licensed under the Apache License 2.0.
