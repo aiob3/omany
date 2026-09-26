@@ -12,8 +12,7 @@ import qs.Ui
 Panel {
   id: root
   moduleName: "io.github.aiob3.omany"
-  // `omarchy-shell omany open|close|toggle` opens the panel, e.g. from a key.
-  ipcTarget: "omany"
+  manageIpc: false
 
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
@@ -82,6 +81,15 @@ Panel {
   onOpenedChanged: if (opened) {
     refresh()
     Qt.callLater(function() { keyCatcher.forceActiveFocus() })
+  }
+
+  // `omarchy-shell omany open|close|toggle|settings`, e.g. from a key binding.
+  IpcHandler {
+    target: "omany"
+    function open(): void { root.open() }
+    function close(): void { root.close() }
+    function toggle(): void { root.toggle() }
+    function settings(): void { root.showSettings = true; root.open() }
   }
 
   Process {
