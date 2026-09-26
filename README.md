@@ -42,7 +42,7 @@ Then point the agent key at omany in `~/.config/hypr/bindings.lua`:
 ```lua
 hl.unbind("SUPER + SHIFT + CTRL + A")
 o.bind("SUPER + SHIFT + CTRL + A", "Agent in Herdr", "omarchy-shell shell toggle io.github.aiob3.omany")
-o.bind("SUPER + ALT + CTRL + SHIFT + A", "Other agent in Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"other\"}'")
+o.bind("SUPER + CTRL + SHIFT + Z", "Other agent in Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"other\"}'")
 ```
 
 Check the result with `hyprctl reload && hyprctl configerrors`.
