@@ -1,0 +1,23 @@
+#!/bin/bash
+# Reset omany to a fresh install through Omarchy's own commands: disabling drops
+# the bar entry with every setting it holds, enabling puts a clean one back
+# after the clock. The manual config file is set aside, not deleted.
+
+set -uo pipefail
+
+id="io.github.aiob3.omany"
+config="${XDG_CONFIG_HOME:-$HOME/.config}/omany/config"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/omany"
+stamp=$(date +%Y%m%d-%H%M%S)
+mkdir -p "$state"
+
+# Kept only as a way back; the reset itself never edits shell.json directly.
+cp "${XDG_CONFIG_HOME:-$HOME/.config}/omarchy/shell.json" "$state/shell.json.bak-$stamp"
+
+omarchy plugin disable "$id" >/dev/null || { notify-send -u critical "omany" "Reset failed at disable" 2>/dev/null; exit 1; }
+omarchy plugin enable "$id" --after omarchy.clock >/dev/null || { notify-send -u critical "omany" "Reset failed at enable" 2>/dev/null; exit 1; }
+
+[[ -f $config ]] && mv "$config" "$config.bak-$stamp"
+touch "$state/placed"
+
+notify-send "omany" "Settings reset. Backups in $state" 2>/dev/null

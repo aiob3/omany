@@ -91,6 +91,12 @@ OMANY_SLOT_X=""            # optional agent for the X key
 
 Each named session gets its own window.
 
+To start over, open the panel, go to **Settings** and click **Reset omany to a fresh
+install** twice. It goes through Omarchy's own `omarchy plugin disable` and
+`enable`, which drop every omany setting and put a clean icon back after the
+clock, and sets `~/.config/omany/config` aside as a `.bak` file. A copy of
+`shell.json` is kept in `~/.local/state/omany/` as a way back.
+
 ## Heads-up: unattended mode
 
 omany starts agents with the **same flags `omarchy agent` uses**, and those skip

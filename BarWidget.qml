@@ -26,6 +26,7 @@ Panel {
   property var st: ({ default: "", other: "", slots: { s: "", x: "" }, agents: [], online: false,
                       running: [], settings: { workspace: "", cwd: "", loadSkill: true, position: "center" } })
   property bool showSettings: false
+  property bool confirmReset: false
 
   readonly property var installedNames: namesWithState("installed")
   readonly property var installerNames: namesWithState("installer")
@@ -77,6 +78,8 @@ Panel {
   // Keeps "Running now" current while the panel is open.
   Timer { interval: 3000; running: root.opened; repeat: true; onTriggered: root.refresh() }
   Timer { id: refreshTimer; interval: 600; onTriggered: root.refresh() }
+  // A reset needs a second click within a few seconds.
+  Timer { id: resetTimer; interval: 4000; onTriggered: root.confirmReset = false }
 
   BarIconButton {
     id: button
@@ -288,6 +291,25 @@ Panel {
                 foreground: root.foreground
                 // Controlled switch: `checked` still holds the old value here.
                 onToggled: root.setOption("loadSkill", checked ? "false" : "true", true)
+              }
+            }
+
+            Button {
+              width: parent.width
+              text: root.confirmReset ? "Click again to erase all omany settings" : "Reset omany to a fresh install"
+              iconText: "󰑓"
+              foreground: root.confirmReset ? Color.urgent : root.foreground
+              fontFamily: root.fontFamily
+              bordered: true
+              onClicked: {
+                if (!root.confirmReset) {
+                  root.confirmReset = true
+                  resetTimer.restart()
+                  return
+                }
+                root.confirmReset = false
+                Quickshell.execDetached([root.pluginDir + "/bin/omany-reset"])
+                refreshTimer.restart()
               }
             }
           }
