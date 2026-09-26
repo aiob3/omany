@@ -18,8 +18,9 @@ omany, every agent lands in the same Herdr window:
   Claude) in the same workspace, so the two can work side by side.
 - **A bar icon:** click for your default agent, right-click for the other one.
   It sits right after the clock by default.
-- **Two more slots:** Super+Ctrl+Shift+S and X start Hermes and Grok, the other
-  agents Omarchy installs, or any agent you pick for them in the settings.
+- **Two optional slots:** Super+Ctrl+Shift+S and X start any other agent you
+  pick in the settings. They are empty until you choose; Hermes and Grok, which
+  Omarchy can install, are natural picks.
 - **Omarchy-aware from the first turn:** Claude Code and Codex get the `omarchy`
   skill loaded as soon as they start, if the skill is installed for them.
 
@@ -55,8 +56,8 @@ o.bind("SUPER + CTRL + SHIFT + X", "Slot X agent in Herdr", "omarchy-shell shell
 |---|---|
 | Super+Ctrl+Shift+A | your Omarchy default agent |
 | Super+Ctrl+Shift+Z | the other one (Claude Code <-> Codex) |
-| Super+Ctrl+Shift+S | slot S (Hermes by default) |
-| Super+Ctrl+Shift+X | slot X (Grok by default) |
+| Super+Ctrl+Shift+S | slot S (empty until you pick an agent) |
+| Super+Ctrl+Shift+X | slot X (empty until you pick an agent) |
 
 Check the result with `hyprctl reload && hyprctl configerrors`.
 
@@ -68,8 +69,8 @@ Open the bar settings and pick **omany**. You can change:
 |---|---|---|
 | Position | center | Left, center (right after the clock) or right side of the bar |
 | Other agent | auto | Agent for right-click and the Z key; auto swaps Claude Code and Codex |
-| Slot S agent | hermes | Agent for the S key |
-| Slot X agent | grok | Agent for the X key |
+| Slot S agent | none | Optional agent for the S key |
+| Slot X agent | none | Optional agent for the X key |
 | Herdr workspace | agents | Label of the workspace where agents open |
 | Working folder | empty | Empty follows `omarchy agent` (~/Work when launched from home) |
 | Load the Omarchy skill | on | Sends `/omarchy` or `$omarchy` on the first turn |
@@ -83,8 +84,8 @@ OMANY_CWD=""               # empty = same rule as `omarchy agent` (~/Work when l
 OMANY_LOAD_SKILL=true      # load the omarchy skill on the first turn (Claude Code, Codex)
 OMANY_SESSION=""           # named Herdr session; empty = the default one
 OMANY_OTHER_AGENT=""       # agent for the Z key; empty = Claude Code <-> Codex
-OMANY_SLOT_S="hermes"      # agent for the S key
-OMANY_SLOT_X="grok"        # agent for the X key
+OMANY_SLOT_S=""            # optional agent for the S key
+OMANY_SLOT_X=""            # optional agent for the X key
 ```
 
 Each named session gets its own window.

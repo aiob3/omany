@@ -72,8 +72,8 @@
           "omp",
           "pi"
         ],
-        "defaultValue": "hermes",
-        "description": "Agent for Super+Ctrl+Shift+S. Hermes ships with Omarchy. None leaves the slot empty."
+        "defaultValue": "none",
+        "description": "Optional agent for Super+Ctrl+Shift+S. Empty until you pick one. Suggestions: Hermes and Grok (Omarchy can install both), Gemini, OpenCode, Copilot."
       },
       {
         "key": "slotX",
@@ -92,8 +92,8 @@
           "omp",
           "pi"
         ],
-        "defaultValue": "grok",
-        "description": "Agent for Super+Ctrl+Shift+X. Grok ships with Omarchy. None leaves the slot empty."
+        "defaultValue": "none",
+        "description": "Optional agent for Super+Ctrl+Shift+X. Empty until you pick one. Suggestions: Hermes and Grok (Omarchy can install both), Gemini, OpenCode, Copilot."
       },
       {
         "key": "workspace",

@@ -14,8 +14,8 @@
 #   OMANY_LOAD_SKILL=true      # load the omarchy skill on the first turn
 #   OMANY_SESSION=""           # named Herdr session; empty = default
 #   OMANY_OTHER_AGENT=""       # agent for `omany --other`; empty = claude <-> codex
-#   OMANY_SLOT_S="hermes"      # agent for `omany --slot s` (ships with Omarchy)
-#   OMANY_SLOT_X="grok"        # agent for `omany --slot x` (ships with Omarchy)
+#   OMANY_SLOT_S=""            # optional agent for `omany --slot s`; empty = unassigned
+#   OMANY_SLOT_X=""            # optional agent for `omany --slot x`; empty = unassigned
 #
 # `omany --other` starts the counterpart of the default agent instead (Claude when
 # the default is Codex, Codex when it is Claude). `omany --slot s|x` starts the
@@ -29,8 +29,8 @@ OMANY_CWD="${OMANY_CWD:-}"
 OMANY_LOAD_SKILL="${OMANY_LOAD_SKILL:-true}"
 OMANY_SESSION="${OMANY_SESSION:-}"
 OMANY_OTHER_AGENT="${OMANY_OTHER_AGENT:-}"
-OMANY_SLOT_S="${OMANY_SLOT_S:-hermes}"
-OMANY_SLOT_X="${OMANY_SLOT_X:-grok}"
+OMANY_SLOT_S="${OMANY_SLOT_S:-}"
+OMANY_SLOT_X="${OMANY_SLOT_X:-}"
 config="${XDG_CONFIG_HOME:-$HOME/.config}/omany/config"
 # shellcheck source=/dev/null
 [[ -f $config ]] && source "$config"
