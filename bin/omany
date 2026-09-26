@@ -94,8 +94,12 @@ elif [[ ${1:-} == --slot ]]; then
   agent="$slot_agent"
 fi
 
-# Same unattended flags as omarchy-agent, mapped to Herdr agent kinds.
+# Same unattended flags as omarchy-agent, mapped to Herdr agent kinds. Agents
+# Herdr cannot recognize still open in a Herdr tab, as a plain command (no agent
+# state or `herdr agent prompt` for them).
 skill=""
+kind=""
+plain=""
 case "$agent" in
 claude) kind=claude; args=(--permission-mode auto); skill="/omarchy"; skill_dir="$HOME/.claude/skills/omarchy" ;;
 codex) kind=codex; args=(--approve-for-me); skill='$omarchy'; skill_dir="$HOME/.codex/skills/omarchy" ;;
@@ -107,10 +111,10 @@ cursor-agent) kind=cursor; args=(--yolo --trust) ;;
 hermes) kind=hermes; args=(--yolo) ;;
 omp) kind=omp; args=(--auto-approve) ;;
 pi) kind=pi; args=() ;;
-*)
-  echo "$agent is not a Herdr agent kind, falling back to omarchy-agent"
-  exec omarchy-agent --pick
-  ;;
+openclaw) plain="omarchy-launch-openclaw --tui" ;;
+crush) plain="crush --yolo" ;;
+muse) plain="muse --approval-mode never" ;;
+*) fail "omany does not know how to start $agent" ;;
 esac
 [[ $OMANY_LOAD_SKILL == true && -n $skill && -d ${skill_dir:-/nonexistent} ]] || skill=""
 
@@ -134,8 +138,8 @@ for _ in $(seq 100); do
 done
 workspaces=$(h workspace list) || fail "Herdr server did not come up"
 
-# Unique name among live agents: claude, claude-2, claude-3...
-live=$(h agent list | jq -r '.result.agents[].name // empty')
+# Unique name among live agents and tab labels: claude, claude-2, claude-3...
+live=$( { h agent list | jq -r '.result.agents[].name // empty'; h tab list | jq -r '.result.tabs[]?.label // empty'; } 2>/dev/null)
 name="$agent"
 n=1
 while grep -qx "$name" <<<"$live"; do
@@ -155,7 +159,14 @@ fi
 pane=$(jq -r '.result.root_pane.pane_id' <<<"$r")
 h workspace focus "$ws" >/dev/null
 h tab focus "$tab" >/dev/null
-echo "agent=$name kind=$kind ws=$ws tab=$tab pane=$pane cwd=$cwd"
+echo "agent=$name kind=${kind:-plain} ws=$ws tab=$tab pane=$pane cwd=$cwd"
+
+if [[ -n $plain ]]; then
+  h tab rename "$tab" "$name" >/dev/null 2>&1
+  h pane run "$pane" "$plain" >/dev/null || fail "could not run $plain in $pane"
+  echo "ok: $name in $pane (plain command: $plain)"
+  exit 0
+fi
 
 # A fresh pane needs a moment before its shell reaches the prompt.
 for attempt in 1 2 3 4 5; do

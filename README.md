@@ -33,8 +33,9 @@ omany, every agent lands in the same Herdr window:
 - A default agent: `omarchy default agent <name>`
 - `jq`
 
-omany falls back to the stock `omarchy agent` launcher in two cases: Herdr is not
-installed, or your default agent is one Herdr cannot drive (crush, openclaw, muse).
+Without Herdr, omany falls back to the stock `omarchy agent` launcher. Agents Herdr
+cannot recognize (OpenClaw, Crush, Muse) still open in a Herdr tab as a plain
+command, so they get the tab but not Herdr's agent status or `herdr agent prompt`.
 
 ## Install
 

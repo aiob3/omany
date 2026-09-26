@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.aiob3.omany",
   "name": "omany",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": "Brito",
   "license": "MIT",
   "homepage": "https://github.com/aiob3/omany",
@@ -50,7 +50,10 @@
           "cursor-agent",
           "hermes",
           "omp",
-          "pi"
+          "pi",
+          "openclaw",
+          "crush",
+          "muse"
         ],
         "defaultValue": "auto",
         "description": "Agent for right-click and the second key. Auto swaps Claude Code and Codex."
@@ -70,10 +73,13 @@
           "cursor-agent",
           "hermes",
           "omp",
-          "pi"
+          "pi",
+          "openclaw",
+          "crush",
+          "muse"
         ],
         "defaultValue": "none",
-        "description": "Optional agent for Super+Ctrl+Shift+S. Empty until you pick one. Suggestions: Hermes and Grok (Omarchy can install both), Gemini, OpenCode, Copilot."
+        "description": "Optional agent for Super+Ctrl+Shift+S. Empty until you pick one. Suggestions: Hermes, Grok and OpenClaw (Omarchy can install them), Gemini, OpenCode, Copilot."
       },
       {
         "key": "slotX",
@@ -90,10 +96,13 @@
           "cursor-agent",
           "hermes",
           "omp",
-          "pi"
+          "pi",
+          "openclaw",
+          "crush",
+          "muse"
         ],
         "defaultValue": "none",
-        "description": "Optional agent for Super+Ctrl+Shift+X. Empty until you pick one. Suggestions: Hermes and Grok (Omarchy can install both), Gemini, OpenCode, Copilot."
+        "description": "Optional agent for Super+Ctrl+Shift+X. Empty until you pick one. Suggestions: Hermes, Grok and OpenClaw (Omarchy can install them), Gemini, OpenCode, Copilot."
       },
       {
         "key": "workspace",
