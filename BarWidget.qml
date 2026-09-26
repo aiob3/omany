@@ -142,10 +142,20 @@ Panel {
             fontFamily: root.fontFamily
           }
 
-          SlotRow { width: parent.width; keyName: "A"; agent: root.st.default || ""; note: "Omarchy default"; runArgs: [] }
-          SlotRow { width: parent.width; keyName: "Z"; agent: root.st.other || ""; note: "other agent"; runArgs: ["--other"] }
-          SlotRow { width: parent.width; keyName: "S"; agent: root.st.slots ? root.st.slots.s : ""; slotKey: "slotS"; runArgs: ["--slot", "s"] }
-          SlotRow { width: parent.width; keyName: "X"; agent: root.st.slots ? root.st.slots.x : ""; slotKey: "slotX"; runArgs: ["--slot", "x"] }
+          SlotRow { width: parent.width; keyName: "A"; agent: root.st.default || ""; slotKey: "slotA"; choice: (root.st.slots && root.st.slots.a) || "omarchy"; firstOption: "omarchy"; runArgs: [] }
+          SlotRow { width: parent.width; keyName: "Z"; agent: root.st.other || ""; slotKey: "otherAgent"; choice: (root.st.slots && root.st.slots.z) || "auto"; firstOption: "auto"; runArgs: ["--other"] }
+          SlotRow { width: parent.width; keyName: "S"; agent: root.st.slots ? root.st.slots.s : ""; slotKey: "slotS"; choice: (root.st.slots && root.st.slots.s) || "none"; runArgs: ["--slot", "s"] }
+          SlotRow { width: parent.width; keyName: "X"; agent: root.st.slots ? root.st.slots.x : ""; slotKey: "slotX"; choice: (root.st.slots && root.st.slots.x) || "none"; runArgs: ["--slot", "x"] }
+
+          Text {
+            width: parent.width
+            wrapMode: Text.WordWrap
+            text: "A: omarchy follows your Omarchy default (" + (root.st.omarchyDefault || "none") + ")  ·  Z: auto swaps Claude Code and Codex"
+                  + "\nNow: A opens " + (root.st.default || "—") + ", Z opens " + (root.st.other || "—")
+            color: root.dim
+            font.family: root.fontFamily
+            font.pixelSize: Style.font.caption
+          }
 
           PanelSeparator { foreground: root.foreground }
 
@@ -255,17 +265,6 @@ Panel {
               }
             }
             SettingRow {
-              label: "Other agent (Z)"
-              Dropdown {
-                width: Style.spacing.dropdownWidth
-                showLabel: false
-                fontFamily: root.fontFamily
-                options: ["auto"].concat(root.installedNames)
-                value: (root.settings && root.settings.otherAgent) || "auto"
-                onChanged: function(v) { root.setOption("otherAgent", v) }
-              }
-            }
-            SettingRow {
               label: "Herdr workspace"
               TextField {
                 width: Style.spacing.dropdownWidth
@@ -350,6 +349,8 @@ Panel {
     property string agent: ""
     property string note: ""
     property string slotKey: ""
+    property string choice: "none"
+    property string firstOption: "none"
     property var runArgs: []
     implicitHeight: Math.max(keyLabel.implicitHeight, runButton.implicitHeight, picker.visible ? picker.implicitHeight : 0)
     height: implicitHeight
@@ -382,8 +383,8 @@ Panel {
       width: Style.spacing.dropdownWidth
       showLabel: false
       fontFamily: root.fontFamily
-      options: ["none"].concat(root.installedNames)
-      value: slot.agent || "none"
+      options: [slot.firstOption].concat(root.installedNames)
+      value: slot.choice
       onChanged: function(v) { root.setOption(slot.slotKey, v) }
     }
     Button {

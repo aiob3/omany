@@ -13,6 +13,7 @@
 #   OMANY_CWD=""               # empty = same rule as `omarchy agent`
 #   OMANY_LOAD_SKILL=true      # load the omarchy skill on the first turn
 #   OMANY_SESSION=""           # named Herdr session; empty = default
+#   OMANY_SLOT_A=""            # agent for A; empty = Omarchy's default agent
 #   OMANY_OTHER_AGENT=""       # agent for `omany --other`; empty = claude <-> codex
 #   OMANY_SLOT_S=""            # optional agent for `omany --slot s`; empty = unassigned
 #   OMANY_SLOT_X=""            # optional agent for `omany --slot x`; empty = unassigned
@@ -58,7 +59,7 @@ if [[ ${1:-} == --focus ]]; then
   exit 0
 fi
 
-agent=$(omarchy-default-agent)
+agent=$(omany_default_agent)
 [[ -z $agent ]] && exec omarchy-agent --pick
 
 if [[ ${1:-} == --other ]]; then

@@ -69,7 +69,8 @@ Open the bar settings and pick **omany**. You can change:
 | Setting | Default | What it does |
 |---|---|---|
 | Position | center | Left, center (right after the clock) or right side of the bar |
-| Other agent | auto | Agent for right-click and the Z key; auto swaps Claude Code and Codex |
+| Agent (A) | omarchy | Agent for the A key; omarchy follows your Omarchy default agent |
+| Other agent | auto | Agent for the Z key; auto swaps Claude Code and Codex |
 | Slot S agent | none | Optional agent for the S key |
 | Slot X agent | none | Optional agent for the X key |
 | Herdr workspace | agents | Label of the workspace where agents open |
@@ -84,6 +85,7 @@ OMANY_WORKSPACE="agents"   # label of the Herdr workspace
 OMANY_CWD=""               # empty = same rule as `omarchy agent` (~/Work when launched from $HOME)
 OMANY_LOAD_SKILL=true      # load the omarchy skill on the first turn (Claude Code, Codex)
 OMANY_SESSION=""           # named Herdr session; empty = the default one
+OMANY_SLOT_A=""            # agent for the A key; empty = Omarchy default agent
 OMANY_OTHER_AGENT=""       # agent for the Z key; empty = Claude Code <-> Codex
 OMANY_SLOT_S=""            # optional agent for the S key
 OMANY_SLOT_X=""            # optional agent for the X key

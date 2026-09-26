@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.aiob3.omany",
   "name": "omany",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "author": "Brito",
   "license": "MIT",
   "homepage": "https://github.com/aiob3/omany",
@@ -34,6 +34,29 @@
         ],
         "defaultValue": "center",
         "description": "Where the icon sits on the bar. Center puts it right after the clock."
+      },
+      {
+        "key": "slotA",
+        "type": "enum",
+        "label": "Agent (A)",
+        "options": [
+          "omarchy",
+          "claude",
+          "codex",
+          "gemini",
+          "opencode",
+          "copilot",
+          "grok",
+          "cursor-agent",
+          "hermes",
+          "omp",
+          "pi",
+          "openclaw",
+          "crush",
+          "muse"
+        ],
+        "defaultValue": "omarchy",
+        "description": "Agent for left slot A and Super+Ctrl+Shift+A. Omarchy follows your Omarchy default agent; picking one here changes only omany."
       },
       {
         "key": "otherAgent",

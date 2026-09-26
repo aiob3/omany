@@ -9,7 +9,8 @@ source "$(dirname "$(readlink -f "$0")")/omany-settings"
 herdr_cmd=(herdr)
 [[ -n $OMANY_SESSION ]] && herdr_cmd+=(--session "$OMANY_SESSION")
 
-default=$(omarchy-default-agent 2>/dev/null)
+default=$(omany_default_agent)
+omarchy_default=$(omarchy-default-agent 2>/dev/null)
 other=$([[ -n $default ]] && omany_other_agent "$default")
 
 agents="[]"
@@ -31,13 +32,15 @@ if command -v herdr >/dev/null && workspaces=$("${herdr_cmd[@]}" workspace list 
 fi
 
 jq -n \
-  --arg default "$default" --arg other "$other" \
+  --arg default "$default" --arg other "$other" --arg omarchyDefault "$omarchy_default" \
+  --arg slotA "$OMANY_SLOT_A" --arg otherSetting "$OMANY_OTHER_AGENT" \
   --arg slotS "$OMANY_SLOT_S" --arg slotX "$OMANY_SLOT_X" \
   --arg workspace "$OMANY_WORKSPACE" --arg cwd "$OMANY_CWD" \
   --arg loadSkill "$OMANY_LOAD_SKILL" \
   --arg position "$(omany_bar position)" \
   --argjson agents "$agents" --argjson running "$running" --argjson online "$online" \
-  '{default: $default, other: $other, slots: {s: $slotS, x: $slotX},
+  '{default: $default, other: $other, omarchyDefault: $omarchyDefault,
+    slots: {a: $slotA, z: $otherSetting, s: $slotS, x: $slotX},
     agents: $agents, online: $online, running: $running,
     settings: {workspace: $workspace, cwd: $cwd, loadSkill: ($loadSkill == "true"),
                position: (if $position == "" then "center" else $position end)}}'

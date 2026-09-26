@@ -8,6 +8,7 @@ OMANY_WORKSPACE="${OMANY_WORKSPACE:-agents}"
 OMANY_CWD="${OMANY_CWD:-}"
 OMANY_LOAD_SKILL="${OMANY_LOAD_SKILL:-true}"
 OMANY_SESSION="${OMANY_SESSION:-}"
+OMANY_SLOT_A="${OMANY_SLOT_A:-}"
 OMANY_OTHER_AGENT="${OMANY_OTHER_AGENT:-}"
 OMANY_SLOT_S="${OMANY_SLOT_S:-}"
 OMANY_SLOT_X="${OMANY_SLOT_X:-}"
@@ -23,6 +24,7 @@ omany_bar() { jq -r --arg k "$1" 'if has($k) then .[$k] | tostring else empty en
 _v=$(omany_bar workspace) && [[ -n $_v ]] && OMANY_WORKSPACE="$_v"
 _v=$(omany_bar cwd) && [[ -n $_v ]] && OMANY_CWD="$_v"
 _v=$(omany_bar loadSkill) && [[ -n $_v ]] && OMANY_LOAD_SKILL="$_v"
+_v=$(omany_bar slotA) && [[ -n $_v ]] && { [[ $_v == omarchy ]] && OMANY_SLOT_A="" || OMANY_SLOT_A="$_v"; }
 _v=$(omany_bar otherAgent) && [[ -n $_v ]] && { [[ $_v == auto ]] && OMANY_OTHER_AGENT="" || OMANY_OTHER_AGENT="$_v"; }
 _v=$(omany_bar slotS) && [[ -n $_v ]] && { [[ $_v == none ]] && OMANY_SLOT_S="" || OMANY_SLOT_S="$_v"; }
 _v=$(omany_bar slotX) && [[ -n $_v ]] && { [[ $_v == none ]] && OMANY_SLOT_X="" || OMANY_SLOT_X="$_v"; }
@@ -47,6 +49,11 @@ omany_agent_state() {
     return
   fi
   echo installed
+}
+
+# Agent for A: the one picked for omany, else Omarchy's default agent.
+omany_default_agent() {
+  if [[ -n $OMANY_SLOT_A ]]; then echo "$OMANY_SLOT_A"; else omarchy-default-agent 2>/dev/null; fi
 }
 
 # The counterpart for Z and right-click: auto swaps Claude Code and Codex, and
