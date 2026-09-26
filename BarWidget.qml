@@ -420,9 +420,12 @@ Panel {
       font.family: root.fontFamily
       font.pixelSize: Style.font.body
     }
-    Dropdown {
+    // Searchable: Omarchy's plain Dropdown shows at most 8 rows, and the agent list
+    // is longer, so the last agents were hidden below the fold.
+    SearchableDropdown {
       id: picker
       visible: !!slot.slotKey
+      placeholderText: "Type to find an agent..."
       anchors.left: keyLabel.right
       anchors.verticalCenter: parent.verticalCenter
       width: Style.spacing.dropdownWidth
