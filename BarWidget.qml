@@ -27,6 +27,7 @@ Panel {
                       running: [], settings: { workspace: "", cwd: "", loadSkill: true, position: "center" } })
   property bool showSettings: false
   property bool confirmReset: false
+  property bool savedFlash: false
 
   readonly property var installedNames: namesWithState("installed")
   readonly property var installerNames: namesWithState("installer")
@@ -58,6 +59,25 @@ Panel {
     refreshTimer.restart()
   }
 
+  // Text fields are filled from the saved values when settings open, and only
+  // written back on Save or Enter, so the periodic refresh never clobbers typing.
+  function fillTextSettings() {
+    if (!root.st.settings) return
+    workspaceField.text = root.st.settings.workspace || ""
+    cwdField.text = root.st.settings.cwd || ""
+  }
+
+  function saveTextSettings() {
+    if (!root.st.settings) return
+    var ws = workspaceField.text.trim()
+    if (ws && ws !== root.st.settings.workspace) root.setOption("workspace", ws)
+    if (cwdField.text.trim() !== root.st.settings.cwd) root.setOption("cwd", cwdField.text.trim())
+    root.savedFlash = true
+    savedTimer.restart()
+  }
+
+  onShowSettingsChanged: if (showSettings) fillTextSettings()
+
   onOpenedChanged: if (opened) {
     refresh()
     Qt.callLater(function() { keyCatcher.forceActiveFocus() })
@@ -79,6 +99,7 @@ Panel {
   Timer { interval: 3000; running: root.opened; repeat: true; onTriggered: root.refresh() }
   Timer { id: refreshTimer; interval: 600; onTriggered: root.refresh() }
   // A reset needs a second click within a few seconds.
+  Timer { id: savedTimer; interval: 2000; onTriggered: root.savedFlash = false }
   Timer { id: resetTimer; interval: 4000; onTriggered: root.confirmReset = false }
 
   BarIconButton {
@@ -267,21 +288,30 @@ Panel {
             SettingRow {
               label: "Herdr workspace"
               TextField {
+                id: workspaceField
                 width: Style.spacing.dropdownWidth
-                text: root.st.settings ? root.st.settings.workspace : ""
                 foreground: root.foreground
-                onEditingFinished: if (root.st.settings && text !== root.st.settings.workspace) root.setOption("workspace", text)
+                onAccepted: root.saveTextSettings()
               }
             }
             SettingRow {
               label: "Working folder"
               TextField {
+                id: cwdField
                 width: Style.spacing.dropdownWidth
-                text: root.st.settings ? root.st.settings.cwd : ""
                 placeholderText: "same as omarchy agent"
                 foreground: root.foreground
-                onEditingFinished: if (root.st.settings && text !== root.st.settings.cwd) root.setOption("cwd", text)
+                onAccepted: root.saveTextSettings()
               }
+            }
+            Button {
+              width: parent.width
+              text: root.savedFlash ? "Saved ✓" : "Save workspace and folder"
+              iconText: "󰆓"
+              foreground: root.foreground
+              fontFamily: root.fontFamily
+              bordered: true
+              onClicked: root.saveTextSettings()
             }
             SettingRow {
               label: "Load the Omarchy skill"

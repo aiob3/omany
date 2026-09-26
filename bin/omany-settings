@@ -29,6 +29,8 @@ _v=$(omany_bar otherAgent) && [[ -n $_v ]] && { [[ $_v == auto ]] && OMANY_OTHER
 _v=$(omany_bar slotS) && [[ -n $_v ]] && { [[ $_v == none ]] && OMANY_SLOT_S="" || OMANY_SLOT_S="$_v"; }
 _v=$(omany_bar slotX) && [[ -n $_v ]] && { [[ $_v == none ]] && OMANY_SLOT_X="" || OMANY_SLOT_X="$_v"; }
 unset _v
+# "~/Work" typed in the panel means $HOME/Work.
+OMANY_CWD="${OMANY_CWD/#\~/$HOME}"
 
 # Every agent omany can start: the ones Herdr drives, then the plain ones.
 OMANY_AGENTS=(claude codex gemini opencode copilot grok cursor-agent hermes omp pi openclaw crush muse)
