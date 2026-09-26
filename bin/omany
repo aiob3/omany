@@ -1,0 +1,140 @@
+#!/bin/bash
+# omany: launch Omarchy's default agent inside Herdr instead of a loose terminal.
+#
+#   first press  -> opens the Herdr window and a dedicated workspace with the agent
+#   next presses -> focuses that window and opens a new tab with one more agent
+#
+# Every agent gets a unique Herdr name (claude, claude-2, ...), so agents can find
+# and prompt each other with `herdr agent prompt <name>`. Claude Code and Codex
+# also get the Omarchy skill loaded on their first turn when it is installed.
+#
+# Settings (optional): ~/.config/omany/config, plain shell assignments:
+#   OMANY_WORKSPACE="agents"   # label of the Herdr workspace
+#   OMANY_CWD=""               # empty = same rule as `omarchy agent`
+#   OMANY_LOAD_SKILL=true      # load the omarchy skill on the first turn
+#   OMANY_SESSION=""           # named Herdr session; empty = default
+# Log: ${XDG_STATE_HOME:-~/.local/state}/omany.log
+
+set -uo pipefail
+
+OMANY_WORKSPACE="${OMANY_WORKSPACE:-agents}"
+OMANY_CWD="${OMANY_CWD:-}"
+OMANY_LOAD_SKILL="${OMANY_LOAD_SKILL:-true}"
+OMANY_SESSION="${OMANY_SESSION:-}"
+config="${XDG_CONFIG_HOME:-$HOME/.config}/omany/config"
+# shellcheck source=/dev/null
+[[ -f $config ]] && source "$config"
+
+app_id="org.omarchy.herdr${OMANY_SESSION:+.$OMANY_SESSION}"
+log="${XDG_STATE_HOME:-$HOME/.local/state}/omany.log"
+mkdir -p "$(dirname "$log")"
+exec >>"$log" 2>&1
+echo "=== $(date '+%F %T') ==="
+
+fail() {
+  echo "ERROR: $*"
+  notify-send -u critical "omany" "$*" 2>/dev/null
+  exit 1
+}
+
+herdr_cmd=(herdr)
+[[ -n $OMANY_SESSION ]] && herdr_cmd+=(--session "$OMANY_SESSION")
+h() { "${herdr_cmd[@]}" "$@"; }
+
+# Without Herdr, or with an agent Herdr cannot drive, behave like the stock key.
+if ! command -v herdr >/dev/null; then
+  echo "herdr not installed, falling back to omarchy-agent"
+  exec omarchy-agent --pick
+fi
+
+agent=$(omarchy-default-agent)
+[[ -z $agent ]] && exec omarchy-agent --pick
+
+# Same unattended flags as omarchy-agent, mapped to Herdr agent kinds.
+skill=""
+case "$agent" in
+claude) kind=claude; args=(--permission-mode auto); skill="/omarchy"; skill_dir="$HOME/.claude/skills/omarchy" ;;
+codex) kind=codex; args=(--approve-for-me); skill='$omarchy'; skill_dir="$HOME/.codex/skills/omarchy" ;;
+opencode) kind=opencode; args=(--auto) ;;
+gemini) kind=gemini; args=(--yolo) ;;
+copilot) kind=copilot; args=(--allow-all) ;;
+grok) kind=grok; args=(--permission-mode bypassPermissions) ;;
+cursor-agent) kind=cursor; args=(--yolo --trust) ;;
+hermes) kind=hermes; args=(--yolo) ;;
+omp) kind=omp; args=(--auto-approve) ;;
+pi) kind=pi; args=() ;;
+*)
+  echo "$agent is not a Herdr agent kind, falling back to omarchy-agent"
+  exec omarchy-agent --pick
+  ;;
+esac
+[[ $OMANY_LOAD_SKILL == true && -n $skill && -d ${skill_dir:-/nonexistent} ]] || skill=""
+
+# Working directory: the same rule omarchy-agent uses.
+cwd="$OMANY_CWD"
+if [[ -z $cwd ]]; then
+  cwd="$PWD"
+  [[ $cwd == "$HOME" && -d $HOME/Work ]] && cwd="$HOME/Work"
+fi
+
+# Window first: attaching the client also starts the Herdr server on a cold start.
+window=$(hyprctl clients -j | jq -r --arg c "$app_id" '.[] | select(.class == $c) | .address' | head -n1)
+if [[ -n $window ]]; then
+  hyprctl dispatch "hl.dsp.focus({ window = \"address:$window\" })" >/dev/null
+else
+  omarchy-launch-tui --app-id="$app_id" "${herdr_cmd[@]}" &
+fi
+for _ in $(seq 100); do
+  h workspace list >/dev/null 2>&1 && break
+  sleep 0.1
+done
+workspaces=$(h workspace list) || fail "Herdr server did not come up"
+
+# Unique name among live agents: claude, claude-2, claude-3...
+live=$(h agent list | jq -r '.result.agents[].name // empty')
+name="$agent"
+n=1
+while grep -qx "$name" <<<"$live"; do
+  n=$((n + 1))
+  name="$agent-$n"
+done
+
+ws=$(jq -r --arg l "$OMANY_WORKSPACE" '.result.workspaces[] | select(.label == $l) | .workspace_id' <<<"$workspaces" | head -n1)
+if [[ -z $ws ]]; then
+  r=$(h workspace create --cwd "$cwd" --label "$OMANY_WORKSPACE" --focus) || fail "workspace create: $r"
+  ws=$(jq -r '.result.workspace.workspace_id' <<<"$r")
+  tab=$(jq -r '.result.tab.tab_id' <<<"$r")
+else
+  r=$(h tab create --workspace "$ws" --cwd "$cwd" --label "$name" --focus) || fail "tab create: $r"
+  tab=$(jq -r '.result.tab.tab_id' <<<"$r")
+fi
+pane=$(jq -r '.result.root_pane.pane_id' <<<"$r")
+h workspace focus "$ws" >/dev/null
+h tab focus "$tab" >/dev/null
+echo "agent=$name kind=$kind ws=$ws tab=$tab pane=$pane cwd=$cwd"
+
+# A fresh pane needs a moment before its shell reaches the prompt.
+for attempt in 1 2 3 4 5; do
+  r=$(h agent start "$name" --kind "$kind" --pane "$pane" --timeout 30000 -- "${args[@]}" 2>&1) && break
+  if grep -q agent_not_ready <<<"$r"; then
+    # The agent is up but stopped at a startup question (folder trust, login...).
+    # Give the user time to answer it; skip the skill if nobody does.
+    if ! h agent wait "$name" --until idle --until done --timeout 60000 >/dev/null; then
+      notify-send "omany" "$name is waiting for an answer in Herdr" 2>/dev/null
+      skill=""
+    fi
+    break
+  fi
+  [[ $attempt == 5 ]] && fail "could not start $name in $pane: $r"
+  sleep 1
+done
+
+if [[ -n $skill ]]; then
+  # Codex opens a skill picker on "$"; the first Enter only picks the item, so a
+  # prompt that shows no activity gets one more Enter.
+  r=$(h agent prompt "$name" "$skill" --wait --timeout 15000 2>&1)
+  if grep -q agent_prompt_stalled <<<"$r"; then
+    h agent send-keys "$name" enter >/dev/null || fail "could not submit $skill in $name"
+  fi
+fi
+echo "ok: $name in $pane${skill:+ with $skill}"
