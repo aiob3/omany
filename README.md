@@ -88,11 +88,14 @@ The four slots are a starting point. Any key can open any agent, with the same r
 (Herdr, a new tab, a unique name, the skill for Claude Code and Codex):
 
 ```lua
-o.bind("SUPER + CTRL + SHIFT + G", "Gemini in Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"gemini\"}'")
+o.bind("SUPER + CTRL + SHIFT + C", "Copilot in Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"copilot\"}'")
 o.bind("SUPER + CTRL + SHIFT + O", "OpenCode in Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"opencode\"}'")
 ```
 
-Before picking a key, check it is free with `omarchy menu keybindings --print`.
+**Check the key is free first.** Omarchy ships many Super+Ctrl+Shift combinations
+(G, for example, opens Google Messages); a key bound twice runs both actions. List
+what is taken with `omarchy menu keybindings --print`. With Omarchy's defaults, C and
+O are free with Super+Ctrl+Shift.
 From a script, the same launcher runs directly:
 `~/.config/omarchy/plugins/io.github.aiob3.omany/bin/omany --agent <name>`.
 
@@ -279,8 +282,12 @@ As quatro vagas são um ponto de partida. Qualquer tecla abre qualquer agente, c
 mesmas regras:
 
 ```lua
-o.bind("SUPER + CTRL + SHIFT + G", "Gemini no Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"gemini\"}'")
+o.bind("SUPER + CTRL + SHIFT + C", "Copilot no Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"copilot\"}'")
 ```
+
+**Confira antes se a tecla está livre** (`omarchy menu keybindings --print`): o Omarchy
+já usa várias combinações com Super+Ctrl+Shift (a G abre o Google Messages), e uma
+tecla com duas ações executa as duas.
 
 Como todo agente aberto pelo omany fica num mesmo workspace do Herdr com um nome
 estável, eles trabalham juntos: um passa tarefa ao outro com
