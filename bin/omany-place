@@ -1,0 +1,28 @@
+#!/bin/bash
+# Move the omany bar icon to the section chosen in its settings (left, center,
+# right). In the center it sits right after the clock. Does nothing when it is
+# already in place, so the reload that a move triggers cannot loop.
+
+set -uo pipefail
+
+id="io.github.aiob3.omany"
+clock="omarchy.clock"
+want="${1:-center}"
+[[ $want =~ ^(left|center|right)$ ]] || exit 0
+
+shell_json="${XDG_CONFIG_HOME:-$HOME/.config}/omarchy/shell.json"
+ids() { jq -r --arg s "$1" '.bar.layout[$s] // [] | .[] | if type == "object" then .id else . end' "$shell_json" 2>/dev/null; }
+
+current=""
+for s in left center right; do
+  ids "$s" | grep -qx "$id" && current="$s"
+done
+[[ -z $current ]] && exit 0
+
+if [[ $want == center ]] && ids center | grep -qx "$clock"; then
+  [[ $current == center && $(ids center | grep -A1 -x "$clock" | tail -n1) == "$id" ]] && exit 0
+  exec omarchy bar move "$id" --section center --after "$clock"
+fi
+
+[[ $current == "$want" ]] && exit 0
+exec omarchy bar move "$id" --section "$want"

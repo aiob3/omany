@@ -16,6 +16,8 @@ omany, every agent lands in the same Herdr window:
 - **The other agent, one modifier away:** a second key starts the counterpart of
   your default agent (Claude Code when the default is Codex, Codex when it is
   Claude) in the same workspace, so the two can work side by side.
+- **A bar icon:** click for your default agent, right-click for the other one.
+  It sits right after the clock by default.
 - **Omarchy-aware from the first turn:** Claude Code and Codex get the `omarchy`
   skill loaded as soon as they start, if the skill is installed for them.
 
@@ -49,7 +51,18 @@ Check the result with `hyprctl reload && hyprctl configerrors`.
 
 ## Settings
 
-Optional. Put plain shell assignments in `~/.config/omany/config`:
+Open the bar settings and pick **omany**. You can change:
+
+| Setting | Default | What it does |
+|---|---|---|
+| Position | center | Left, center (right after the clock) or right side of the bar |
+| Other agent | auto | Agent for right-click and the second key; auto swaps Claude Code and Codex |
+| Herdr workspace | agents | Label of the workspace where agents open |
+| Working folder | empty | Empty follows `omarchy agent` (~/Work when launched from home) |
+| Load the Omarchy skill | on | Sends `/omarchy` or `$omarchy` on the first turn |
+
+Without the bar, the same settings go in `~/.config/omany/config` as plain shell
+assignments. Anything changed in the bar settings wins:
 
 ```bash
 OMANY_WORKSPACE="agents"   # label of the Herdr workspace

@@ -2,15 +2,87 @@
   "schemaVersion": 1,
   "id": "io.github.aiob3.omany",
   "name": "omany",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Brito",
   "license": "MIT",
   "homepage": "https://github.com/aiob3/omany",
   "description": "Open Omarchy's default coding agent inside Herdr: one workspace, a new tab per keypress, and the Omarchy skill loaded on the first turn.",
-  "kinds": ["overlay"],
+  "kinds": [
+    "overlay",
+    "bar-widget"
+  ],
   "keepLoaded": false,
   "entryPoints": {
-    "overlay": "Overlay.qml"
+    "overlay": "Overlay.qml",
+    "barWidget": "Widget.qml"
   },
-  "tags": ["herdr", "agents", "claude", "codex", "hyprland"]
+  "barWidget": {
+    "displayName": "omany",
+    "description": "Click for your default agent in Herdr, right-click for the other one.",
+    "category": "AI",
+    "allowMultiple": false,
+    "defaultSection": "center",
+    "schema": [
+      {
+        "key": "position",
+        "type": "enum",
+        "label": "Position",
+        "options": [
+          "center",
+          "left",
+          "right"
+        ],
+        "defaultValue": "center",
+        "description": "Where the icon sits on the bar. Center puts it right after the clock."
+      },
+      {
+        "key": "otherAgent",
+        "type": "enum",
+        "label": "Other agent",
+        "options": [
+          "auto",
+          "claude",
+          "codex",
+          "gemini",
+          "opencode",
+          "copilot",
+          "grok",
+          "cursor-agent",
+          "hermes",
+          "omp",
+          "pi"
+        ],
+        "defaultValue": "auto",
+        "description": "Agent for right-click and the second key. Auto swaps Claude Code and Codex."
+      },
+      {
+        "key": "workspace",
+        "type": "string",
+        "label": "Herdr workspace",
+        "defaultValue": "agents",
+        "description": "Label of the Herdr workspace where agents open."
+      },
+      {
+        "key": "cwd",
+        "type": "path",
+        "label": "Working folder",
+        "defaultValue": "",
+        "description": "Empty uses the same rule as omarchy agent (~/Work when launched from home)."
+      },
+      {
+        "key": "loadSkill",
+        "type": "boolean",
+        "label": "Load the Omarchy skill",
+        "defaultValue": true,
+        "description": "Send /omarchy (Claude Code) or $omarchy (Codex) on the first turn."
+      }
+    ]
+  },
+  "tags": [
+    "herdr",
+    "agents",
+    "claude",
+    "codex",
+    "hyprland"
+  ]
 }

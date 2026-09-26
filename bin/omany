@@ -30,6 +30,16 @@ config="${XDG_CONFIG_HOME:-$HOME/.config}/omany/config"
 # shellcheck source=/dev/null
 [[ -f $config ]] && source "$config"
 
+# Settings changed in the bar's settings form win over the config file. shell.json
+# only stores keys the user changed, so untouched fields keep the values above.
+bar_settings=$(jq -c '[.bar.layout[]?[]? | objects | select(.id == "io.github.aiob3.omany")][0] // {}' \
+  "${XDG_CONFIG_HOME:-$HOME/.config}/omarchy/shell.json" 2>/dev/null) || bar_settings="{}"
+bar() { jq -r --arg k "$1" 'if has($k) then .[$k] | tostring else empty end' <<<"$bar_settings"; }
+v=$(bar workspace) && [[ -n $v ]] && OMANY_WORKSPACE="$v"
+v=$(bar cwd) && [[ -n $v ]] && OMANY_CWD="$v"
+v=$(bar loadSkill) && [[ -n $v ]] && OMANY_LOAD_SKILL="$v"
+v=$(bar otherAgent) && [[ -n $v ]] && { [[ $v == auto ]] && OMANY_OTHER_AGENT="" || OMANY_OTHER_AGENT="$v"; }
+
 app_id="org.omarchy.herdr${OMANY_SESSION:+.$OMANY_SESSION}"
 log="${XDG_STATE_HOME:-$HOME/.local/state}/omany.log"
 mkdir -p "$(dirname "$log")"
