@@ -5,5 +5,5 @@ Please report security problems privately through
 not in a public issue.
 
 omany starts agents with the same approval-skipping flags as `omarchy agent`; that is
-documented behavior, not a vulnerability. It never uses `sudo`, never installs
-software, and only writes the files listed under "What it writes" in the README.
+documented behavior, not a vulnerability. It never asks for elevated privileges,
+never installs software, and only writes the files listed under "What it writes" in the README.

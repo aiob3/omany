@@ -7,10 +7,10 @@ rules as the rest of the series.
 ## Before you open a pull request
 
 1. **Fork and branch** from `main`. One topic per pull request.
-2. **Run the compliance check** from a checkout of omonorepo:
+2. **Run the compliance check** from a local copy of
+   [omonorepo](https://github.com/aiob3/omonorepo):
 
    ```bash
-   git clone https://github.com/aiob3/omonorepo.git
    omonorepo/compliance/bin/omono-check path/to/your/omany
    ```
 

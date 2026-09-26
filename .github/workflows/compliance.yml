@@ -28,9 +28,7 @@ jobs:
           repository: aiob3/omonorepo
           path: omonorepo
 
-      - name: Tools
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq imagemagick file >/dev/null
-
+      # jq, ImageMagick and file come preinstalled on GitHub's Ubuntu runners.
       - name: Shell syntax
         run: for f in omany/bin/*; do bash -n "$f"; done
 
