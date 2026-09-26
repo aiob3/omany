@@ -98,7 +98,7 @@ Panel {
     open: root.opened
     focusTarget: keyCatcher
     contentWidth: panel.fittedContentWidth(Style.space(430))
-    contentHeight: panel.fittedContentHeight(contentColumn.implicitHeight, Style.space(680))
+    contentHeight: panel.fittedContentHeight(contentColumn.implicitHeight, Style.space(960))
 
     PanelKeyCatcher {
       id: keyCatcher
@@ -231,6 +231,9 @@ Panel {
             bordered: true
             onClicked: root.showSettings = !root.showSettings
           }
+
+          // Breathing room so the last control never sits on the panel's edge.
+          Item { width: 1; height: Style.space(4) }
 
           Column {
             visible: root.showSettings
