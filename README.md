@@ -13,6 +13,9 @@ omany, every agent lands in the same Herdr window:
   agent. The window is never duplicated.
 - **Named agents:** each agent gets a unique Herdr name (`claude`, `claude-2`,
   `codex`...), so agents can find and prompt each other with `herdr agent prompt`.
+- **The other agent, one modifier away:** a second key starts the counterpart of
+  your default agent (Claude Code when the default is Codex, Codex when it is
+  Claude) in the same workspace, so the two can work side by side.
 - **Omarchy-aware from the first turn:** Claude Code and Codex get the `omarchy`
   skill loaded as soon as they start, if the skill is installed for them.
 
@@ -39,6 +42,7 @@ Then point the agent key at omany in `~/.config/hypr/bindings.lua`:
 ```lua
 hl.unbind("SUPER + SHIFT + CTRL + A")
 o.bind("SUPER + SHIFT + CTRL + A", "Agent in Herdr", "omarchy-shell shell toggle io.github.aiob3.omany")
+o.bind("SUPER + ALT + CTRL + SHIFT + A", "Other agent in Herdr", "omarchy-shell shell summon io.github.aiob3.omany '{\"agent\":\"other\"}'")
 ```
 
 Check the result with `hyprctl reload && hyprctl configerrors`.
@@ -52,6 +56,7 @@ OMANY_WORKSPACE="agents"   # label of the Herdr workspace
 OMANY_CWD=""               # empty = same rule as `omarchy agent` (~/Work when launched from $HOME)
 OMANY_LOAD_SKILL=true      # load the omarchy skill on the first turn (Claude Code, Codex)
 OMANY_SESSION=""           # named Herdr session; empty = the default one
+OMANY_OTHER_AGENT=""       # agent for the second key; empty = Claude Code <-> Codex
 ```
 
 Each named session gets its own window.
@@ -77,7 +82,7 @@ Everything omany does is logged to `~/.local/state/omany.log`.
 omarchy plugin remove io.github.aiob3.omany
 ```
 
-Then remove the two binding lines above. The default key comes back.
+Then remove the binding lines above. The default key comes back.
 
 ## License
 

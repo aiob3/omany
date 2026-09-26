@@ -12,13 +12,20 @@ Item {
   readonly property string pluginId: (manifest && manifest.id) || "io.github.aiob3.omany"
   readonly property string pluginDir: manifest && manifest.__sourceDir ? String(manifest.__sourceDir) : (Quickshell.env("HOME") + "/.config/omarchy/plugins/" + pluginId)
 
-  function launch() {
-    Quickshell.execDetached([root.pluginDir + "/bin/omany"])
+  function launch(other) {
+    var args = [root.pluginDir + "/bin/omany"]
+    if (other) args.push("--other")
+    Quickshell.execDetached(args)
     if (root.shell && typeof root.shell.hide === "function")
       root.shell.hide(root.pluginId)
   }
 
-  function open(payloadJson) { root.launch() }
-  function toggle() { root.launch() }
+  // summon payload {"agent":"other"} starts the counterpart of the default agent.
+  function open(payloadJson) {
+    var other = false
+    try { other = JSON.parse(String(payloadJson || "{}")).agent === "other" } catch (e) {}
+    root.launch(other)
+  }
+  function toggle() { root.launch(false) }
   function close() {}
 }

@@ -13,6 +13,10 @@
 #   OMANY_CWD=""               # empty = same rule as `omarchy agent`
 #   OMANY_LOAD_SKILL=true      # load the omarchy skill on the first turn
 #   OMANY_SESSION=""           # named Herdr session; empty = default
+#   OMANY_OTHER_AGENT=""       # agent for `omany --other`; empty = claude <-> codex
+#
+# `omany --other` starts the counterpart of the default agent instead (Claude when
+# the default is Codex, Codex when it is Claude), under the same rules.
 # Log: ${XDG_STATE_HOME:-~/.local/state}/omany.log
 
 set -uo pipefail
@@ -21,6 +25,7 @@ OMANY_WORKSPACE="${OMANY_WORKSPACE:-agents}"
 OMANY_CWD="${OMANY_CWD:-}"
 OMANY_LOAD_SKILL="${OMANY_LOAD_SKILL:-true}"
 OMANY_SESSION="${OMANY_SESSION:-}"
+OMANY_OTHER_AGENT="${OMANY_OTHER_AGENT:-}"
 config="${XDG_CONFIG_HOME:-$HOME/.config}/omany/config"
 # shellcheck source=/dev/null
 [[ -f $config ]] && source "$config"
@@ -49,6 +54,19 @@ fi
 
 agent=$(omarchy-default-agent)
 [[ -z $agent ]] && exec omarchy-agent --pick
+
+if [[ ${1:-} == --other ]]; then
+  other="$OMANY_OTHER_AGENT"
+  if [[ -z $other ]]; then
+    case "$agent" in
+    claude) other=codex ;;
+    codex) other=claude ;;
+    *) fail "no counterpart for $agent; set OMANY_OTHER_AGENT in $config" ;;
+    esac
+  fi
+  command -v "$other" >/dev/null || fail "$other is not installed"
+  agent="$other"
+fi
 
 # Same unattended flags as omarchy-agent, mapped to Herdr agent kinds.
 skill=""
