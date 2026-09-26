@@ -182,6 +182,7 @@ Panel {
           SlotRow { width: parent.width; keyName: "X"; agent: root.st.slots ? root.st.slots.x : ""; slotKey: "slotX"; choice: (root.st.slots && root.st.slots.x) || "none"; runArgs: ["--slot", "x"] }
 
           Text {
+            textFormat: Text.PlainText
             width: parent.width
             wrapMode: Text.WordWrap
             text: "A: omarchy follows your Omarchy default (" + (root.st.omarchyDefault || "none") + ")  ·  Z: auto swaps Claude Code and Codex"
@@ -201,6 +202,7 @@ Panel {
           }
 
           Text {
+            textFormat: Text.PlainText
             visible: (root.st.running || []).length === 0
             width: parent.width
             text: root.st.online ? "No agents in this workspace yet." : "Herdr is not running."
@@ -217,6 +219,7 @@ Panel {
               implicitHeight: Math.max(runName.implicitHeight, focusButton.implicitHeight)
               height: implicitHeight
               Text {
+                textFormat: Text.PlainText
                 id: runName
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -226,6 +229,7 @@ Panel {
                 font.pixelSize: Style.font.body
               }
               Text {
+                textFormat: Text.PlainText
                 anchors.right: focusButton.left
                 anchors.rightMargin: Style.space(10)
                 anchors.verticalCenter: parent.verticalCenter
@@ -257,6 +261,7 @@ Panel {
           }
 
           Text {
+            textFormat: Text.PlainText
             width: parent.width
             wrapMode: Text.WordWrap
             text: root.installedNames.join("  ·  ")
@@ -401,6 +406,7 @@ Panel {
     height: implicitHeight
 
     Text {
+      textFormat: Text.PlainText
       id: keyLabel
       anchors.left: parent.left
       anchors.verticalCenter: parent.verticalCenter
@@ -412,6 +418,7 @@ Panel {
       font.bold: true
     }
     Text {
+      textFormat: Text.PlainText
       visible: !slot.slotKey
       anchors.left: keyLabel.right
       anchors.verticalCenter: parent.verticalCenter
@@ -458,6 +465,7 @@ Panel {
     implicitHeight: Math.max(settingLabel.implicitHeight, holder.height)
     height: implicitHeight
     Text {
+      textFormat: Text.PlainText
       id: settingLabel
       anchors.left: parent.left
       anchors.verticalCenter: parent.verticalCenter
