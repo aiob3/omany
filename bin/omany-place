@@ -7,6 +7,13 @@ set -uo pipefail
 
 id="io.github.aiob3.omany"
 clock="omarchy.clock"
+# --first-run: place it after the clock once, then never again on load.
+marker="${XDG_STATE_HOME:-$HOME/.local/state}/omany/placed"
+if [[ ${1:-} == --first-run ]]; then
+  [[ -e $marker ]] && exit 0
+  mkdir -p "$(dirname "$marker")" && touch "$marker"
+  set -- center
+fi
 want="${1:-center}"
 [[ $want =~ ^(left|center|right)$ ]] || exit 0
 
