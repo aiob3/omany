@@ -302,7 +302,8 @@ orquestrar os agentes do seu sistema.
 | Claude Code, Codex | Testados: abrem no Herdr com o skill do Omarchy |
 | GitHub Copilot CLI, Grok | Testados: abrem no Herdr |
 | OpenCode | Abre no Herdr; no nosso teste o próprio OpenCode parou na inicialização dele |
-| Gemini, Cursor Agent, Hermes, OMP, Pi, OpenClaw, Crush, Muse, agy | Suportados, ainda não testados |
+| Gemini, Cursor Agent, Hermes, OMP, Pi, OpenClaw, Crush, Muse | Suportados, ainda não testados |
+| agy | Testado: abre no Herdr como comando simples |
 
 ### Atenção: modo sem aprovação
 
