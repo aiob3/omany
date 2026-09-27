@@ -152,7 +152,8 @@ means omany knows how to start the agent, but we have not run it yet.
 | Grok | Tested: opens in Herdr |
 | OpenCode | Opens in Herdr; in our test OpenCode itself stopped during its own startup |
 | Gemini, Cursor Agent, Hermes, OMP, Pi | Supported, not tested yet |
-| OpenClaw, Crush, Muse, agy | Supported as a plain command in a Herdr tab, not tested yet |
+| OpenClaw, Crush, Muse | Supported as a plain command in a Herdr tab, not tested yet |
+| agy | Tested: opens in Herdr as a plain command |
 
 If you run one of the untested agents with omany, an issue with the result is welcome.
 
