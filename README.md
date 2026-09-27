@@ -40,7 +40,7 @@ plugins fit with what you already have.
 - [Herdr](https://github.com/herdrdev/herdr) (`herdr` on `PATH`)
 - `jq`
 - At least one agent Herdr can drive: Claude Code, Codex, Gemini, OpenCode, Copilot,
-  Grok, Cursor Agent, Hermes, OMP or Pi. OpenClaw, Crush and Muse also work,
+  Grok, Cursor Agent, Hermes, OMP or Pi. OpenClaw, Crush, Muse and agy also work,
   as a plain command in a Herdr tab.
 
 Without Herdr, omany falls back to Omarchy's own `omarchy agent` launcher.
@@ -153,6 +153,7 @@ means omany knows how to start the agent, but we have not run it yet.
 | OpenCode | Opens in Herdr; in our test OpenCode itself stopped during its own startup |
 | Gemini, Cursor Agent, Hermes, OMP, Pi | Supported, not tested yet |
 | OpenClaw, Crush, Muse | Supported as a plain command in a Herdr tab, not tested yet |
+| agy | Tested: opens in Herdr as a plain command |
 
 If you run one of the untested agents with omany, an issue with the result is welcome.
 
@@ -301,7 +302,7 @@ orquestrar os agentes do seu sistema.
 | Claude Code, Codex | Testados: abrem no Herdr com o skill do Omarchy |
 | GitHub Copilot CLI, Grok | Testados: abrem no Herdr |
 | OpenCode | Abre no Herdr; no nosso teste o próprio OpenCode parou na inicialização dele |
-| Gemini, Cursor Agent, Hermes, OMP, Pi, OpenClaw, Crush, Muse | Suportados, ainda não testados |
+| Gemini, Cursor Agent, Hermes, OMP, Pi, OpenClaw, Crush, Muse, agy | Suportados, ainda não testados |
 
 ### Atenção: modo sem aprovação
 

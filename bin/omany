@@ -104,6 +104,7 @@ pi) kind=pi; args=() ;;
 openclaw) plain="omarchy-launch-openclaw --tui" ;;
 crush) plain="crush --yolo" ;;
 muse) plain="muse --approval-mode never" ;;
+agy) plain="agy" ;;
 *) fail "omany does not know how to start $agent" ;;
 esac
 [[ $OMANY_LOAD_SKILL == true && -n $skill && -d ${skill_dir:-/nonexistent} ]] || skill=""
