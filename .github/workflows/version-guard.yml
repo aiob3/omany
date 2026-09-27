@@ -1,0 +1,64 @@
+name: version guard
+
+# A pull request that changes what ships must also move the manifest version.
+#
+# Rule H2 alone does not catch this: it only asks whether a tag exists for the
+# version currently in the manifest, so a change that leaves the version untouched
+# keeps passing on the old version and its old tag. That is how agy reached main at
+# 0.11.2, the exact version the marketplace had already validated, leaving the
+# listing unable to see the update. The check runs on the pull request, where the
+# fix is one line, and works for contributions from forks.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the plugin
+        uses: actions/checkout@v4
+        with:
+          path: omany
+          fetch-depth: 0
+
+      - name: Check out the omonorepo compliance rules
+        uses: actions/checkout@v4
+        with:
+          repository: aiob3/omonorepo
+          path: omonorepo
+
+      - name: The version must move when the plugin does
+        id: check
+        run: |
+          set -o pipefail
+          omonorepo/compliance/bin/omono-version omany \
+            "${{ github.event.pull_request.base.sha }}" \
+            "${{ github.event.pull_request.head.sha }}" \
+            > vars.env 2> report.txt
+          status=$?
+          cat vars.env >> "$GITHUB_OUTPUT"
+          cat report.txt
+          exit $status
+
+      - name: Explain the failure in the summary
+        if: failure() && steps.check.outcome == 'failure'
+        run: |
+          {
+            echo "## This pull request needs a new version"
+            echo
+            echo 'It changes files that reach the user (`bin/`, `assets/`, `*.qml`,'
+            echo '`manifest.json`) while `manifest.json` keeps its current version.'
+            echo 'The marketplace binds a listing to one version, so an unchanged'
+            echo 'number means the update cannot be published.'
+            echo
+            echo '```'
+            cat report.txt
+            echo '```'
+            echo
+            echo 'Edit `manifest.json` in this branch and push again. Maintainers cut'
+            echo 'the matching git tag at release time, not here.'
+          } >> "$GITHUB_STEP_SUMMARY"

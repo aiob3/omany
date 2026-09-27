@@ -1,0 +1,95 @@
+name: release
+
+# The button a maintainer presses to cut a release. It runs the compliance rules
+# one more time, creates the git tag rule H2 asks for, and prints a ready-made
+# marketplace update link with the exact commit already filled in.
+#
+# It deliberately stops short of opening the marketplace issue on its own. Every
+# outward action needs the operator's explicit go each time (AGENTS.md), and the
+# marketplace binds a listing to one exact commit, so the last look belongs to a
+# person. The link removes the typing, not the decision.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the plugin
+        uses: actions/checkout@v4
+        with:
+          path: omany
+          fetch-depth: 0
+
+      - name: Check out the omonorepo compliance rules
+        uses: actions/checkout@v4
+        with:
+          repository: aiob3/omonorepo
+          path: omonorepo
+
+      - name: Compliance must pass before a tag exists
+        run: omonorepo/compliance/bin/omono-check --ci omany
+
+      - name: Read the version and refuse to reuse one
+        id: v
+        working-directory: omany
+        run: |
+          version=$(jq -r '.version' manifest.json)
+          id=$(jq -r '.id' manifest.json)
+          sha=$(git rev-parse HEAD)
+          if tagged=$(git rev-list -n1 "v$version" 2>/dev/null); then
+            if [[ $tagged == "$sha" ]]; then
+              echo "v$version already tags this commit; nothing to cut." >&2
+            else
+              echo "::error::v$version already tags ${tagged:0:7}. Bump manifest.json first." >&2
+              exit 1
+            fi
+          fi
+          {
+            echo "version=$version"
+            echo "id=$id"
+            echo "sha=$sha"
+            echo "exists=$([[ -n ${tagged:-} ]] && echo true || echo false)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create and push the tag
+        if: steps.v.outputs.exists == 'false'
+        working-directory: omany
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${{ steps.v.outputs.version }}" \
+            -m "${{ github.event.repository.name }} v${{ steps.v.outputs.version }}"
+          git push origin "v${{ steps.v.outputs.version }}"
+
+      - name: The marketplace link, already filled in
+        run: |
+          enc() { jq -rn --arg v "$1" '$v|@uri'; }
+          base="https://github.com/omacom/omarchy-plugin-marketplace/issues/new"
+          url="$base?template=verify-plugin.yml"
+          url="$url&title=$(enc "[Verify]: ${{ github.event.repository.name }}")"
+          url="$url&verification-action=$(enc 'Verify and publish a newer upstream commit')"
+          url="$url&plugin-id=$(enc '${{ steps.v.outputs.id }}')"
+          url="$url&repository=$(enc '${{ github.server_url }}/${{ github.repository }}')"
+          url="$url&target-commit=$(enc '${{ steps.v.outputs.sha }}')"
+          {
+            echo "## v${{ steps.v.outputs.version }} is tagged"
+            echo
+            echo "Commit \`${{ steps.v.outputs.sha }}\`."
+            echo
+            echo "### Publish the update"
+            echo
+            echo "[Open the marketplace update request]($url)"
+            echo
+            echo 'The form opens with the action, plugin ID, repository and exact'
+            echo 'commit already filled in. Read it, tick the acknowledgment and'
+            echo 'submit. Leave the standard-installation box unticked: this listing'
+            echo 'is `manual-setup`, because Herdr is a dependency the user installs.'
+            echo
+            echo 'The current listing stays untouched until a marketplace maintainer'
+            echo 'approves. Nothing breaks for users while it waits.'
+          } >> "$GITHUB_STEP_SUMMARY"
